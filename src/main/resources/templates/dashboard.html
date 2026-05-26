@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <img th:src="@{/img/izzy-logo.svg}" alt="Izzy Hotel">
+            <small>Conforto para Profissionais em Movimento</small>
+        </div>
+        <nav class="nav">
+            <a class="active" th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/quartos}">Quartos</a>
+            <a th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
+            <a th:href="@{/hospedes}">Hóspedes</a>
+            <a th:href="@{/reservas}">Reservas</a>
+            <a th:href="@{/chamados}">Chamados</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero-strip">
+            <div>
+                <strong>Operação Izzy Hotel</strong>
+                <span>Painel rápido para recepção, governança e manutenção acompanharem a rotina do hotel.</span>
+            </div>
+            <div class="hero-kpis">
+                <div class="hero-kpi">
+                    <strong th:text="${totalQuartos}">0</strong>
+                    <span>quartos</span>
+                </div>
+                <div class="hero-kpi">
+                    <strong th:text="${reservasAtivas}">0</strong>
+                    <span>reservas</span>
+                </div>
+                <div class="hero-kpi">
+                    <strong th:text="${chamadosAbertos}">0</strong>
+                    <span>chamados</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Operação</div>
+                <h1>Resumo operacional</h1>
+                <p class="subtitle">Indicadores principais para entender ocupação, disponibilidade, limpeza, manutenção e demandas internas.</p>
+            </div>
+        </div>
+
+        <section class="grid dashboard-grid">
+            <article class="card-dashboard metric-dark">
+                <div class="metric-header">
+                    <span class="metric-title">Total de quartos</span>
+                    <span class="metric-icon">QT</span>
+                </div>
+                <strong class="metric-value" th:text="${totalQuartos}">0</strong>
+                <span class="metric-note">Base cadastrada para operação.</span>
+            </article>
+
+            <article class="card-dashboard metric-success">
+                <div class="metric-header">
+                    <span class="metric-title">Disponíveis</span>
+                    <span class="metric-icon">OK</span>
+                </div>
+                <strong class="metric-value" th:text="${quartosDisponiveis}">0</strong>
+                <span class="metric-note">Prontos para reserva ou entrada.</span>
+            </article>
+
+            <article class="card-dashboard metric-info">
+                <div class="metric-header">
+                    <span class="metric-title">Ocupados</span>
+                    <span class="metric-icon">OC</span>
+                </div>
+                <strong class="metric-value" th:text="${quartosOcupados}">0</strong>
+                <span class="metric-note">Hóspedes em atendimento.</span>
+            </article>
+
+            <article class="card-dashboard metric-warning">
+                <div class="metric-header">
+                    <span class="metric-title">Em limpeza</span>
+                    <span class="metric-icon">LP</span>
+                </div>
+                <strong class="metric-value" th:text="${quartosLimpeza}">0</strong>
+                <span class="metric-note">Aguardando liberação da governança.</span>
+            </article>
+
+            <article class="card-dashboard metric-danger">
+                <div class="metric-header">
+                    <span class="metric-title">Em manutenção</span>
+                    <span class="metric-icon">MT</span>
+                </div>
+                <strong class="metric-value" th:text="${quartosManutencao}">0</strong>
+                <span class="metric-note">Indisponíveis para operação.</span>
+            </article>
+
+            <article class="card-dashboard metric-purple">
+                <div class="metric-header">
+                    <span class="metric-title">Reservas ativas</span>
+                    <span class="metric-icon">RS</span>
+                </div>
+                <strong class="metric-value" th:text="${reservasAtivas}">0</strong>
+                <span class="metric-note">Reservas ainda não finalizadas.</span>
+            </article>
+
+            <article class="card-dashboard metric-success">
+                <div class="metric-header">
+                    <span class="metric-title">Check-ins do dia</span>
+                    <span class="metric-icon">IN</span>
+                </div>
+                <strong class="metric-value" th:text="${checkinsHoje}">0</strong>
+                <span class="metric-note">Entradas previstas ou realizadas hoje.</span>
+            </article>
+
+            <article class="card-dashboard metric-purple">
+                <div class="metric-header">
+                    <span class="metric-title">Check-outs do dia</span>
+                    <span class="metric-icon">OUT</span>
+                </div>
+                <strong class="metric-value" th:text="${checkoutsHoje}">0</strong>
+                <span class="metric-note">Saídas previstas ou realizadas hoje.</span>
+            </article>
+
+            <article class="card-dashboard metric-danger">
+                <div class="metric-header">
+                    <span class="metric-title">Chamados abertos</span>
+                    <span class="metric-icon">CH</span>
+                </div>
+                <strong class="metric-value" th:text="${chamadosAbertos}">0</strong>
+                <span class="metric-note">Demandas internas que exigem atenção.</span>
+            </article>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

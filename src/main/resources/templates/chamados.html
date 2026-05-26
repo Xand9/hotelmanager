@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamados | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <img th:src="@{/img/izzy-logo.svg}" alt="Izzy Hotel">
+            <small>Conforto para Profissionais em Movimento</small>
+        </div>
+        <nav class="nav">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/quartos}">Quartos</a>
+            <a th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
+            <a th:href="@{/hospedes}">Hóspedes</a>
+            <a th:href="@{/reservas}">Reservas</a>
+            <a class="active" th:href="@{/chamados}">Chamados</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Operação interna</div>
+                <h1>Chamados internos</h1>
+                <p class="subtitle">Registre e acompanhe demandas de limpeza, manutenção e solicitações dos hóspedes com status claro para a equipe.</p>
+                <div class="status-legend">
+                    <span class="badge badge-ABERTO">Aberto</span>
+                    <span class="badge badge-EM_ANDAMENTO">Em andamento</span>
+                    <span class="badge badge-CONCLUIDO">Concluído</span>
+                    <span class="badge badge-CANCELADO">Cancelado</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="grid module-layout">
+            <form class="form-card form-grid" th:action="@{/chamados/salvar}" th:object="${chamadoForm}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h2 th:text="*{id} == null ? 'Novo chamado' : 'Editar chamado'">Novo chamado</h2>
+                        <p>Use para limpeza, manutenção, pedido de hóspede ou outra demanda interna.</p>
+                    </div>
+                </div>
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field">
+                    <label>Quarto relacionado</label>
+                    <select th:field="*{quartoId}">
+                        <option value="">Selecione o quarto</option>
+                        <option th:each="quarto : ${quartos}" th:value="${quarto.id}" th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.status.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Tipo do chamado</label>
+                    <select th:field="*{tipo}">
+                        <option value="">Selecione o tipo</option>
+                        <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
+                    </select>
+                    <small>Chamados de limpeza ou manutenção podem atualizar o status operacional do quarto.</small>
+                </div>
+
+                <div class="field">
+                    <label>Status</label>
+                    <select th:field="*{status}">
+                        <option th:each="status : ${statusChamados}" th:value="${status}" th:text="${status.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Descrição</label>
+                    <textarea th:field="*{descricao}" placeholder="Ex: quarto 203 precisa trocar lâmpada, ar-condicionado com problema ou hóspede pediu toalha extra."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary-action" type="submit">Salvar chamado</button>
+                    <a class="btn btn-secondary" th:href="@{/chamados}">Limpar</a>
+                </div>
+            </form>
+
+            <div class="data-card">
+                <div class="section-title">
+                    <div>
+                        <h2>Chamados registrados</h2>
+                        <p>Priorize chamados abertos e mova para andamento ou concluído conforme a equipe atuar.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table-modern">
+                        <thead>
+                        <tr>
+                            <th>Quarto</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Status</th>
+                            <th>Abertura</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(chamados)}">
+                            <td colspan="6" class="empty">
+                                <strong>Nenhum chamado registrado.</strong>
+                                Abra uma demanda para limpeza, manutenção ou solicitação interna.
+                            </td>
+                        </tr>
+                        <tr th:each="item : ${chamados}">
+                            <td>
+                                <div class="cell-primary">
+                                    <span class="cell-title" th:text="${'Quarto ' + item.quarto.numero}">Quarto 203</span>
+                                    <span class="cell-subtitle" th:text="${item.quarto.status.descricao}">Disponível</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-type" th:text="${item.tipo.descricao}">Manutenção</span>
+                            </td>
+                            <td>
+                                <div class="cell-primary">
+                                    <span class="cell-title" th:text="${item.descricao}">Descrição</span>
+                                    <span class="cell-subtitle" th:text="${item.dataConclusao == null ? 'Ainda sem conclusão' : 'Concluído em ' + #temporals.format(item.dataConclusao, 'dd/MM/yyyy HH:mm')}">Ainda sem conclusão</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Aberto</span>
+                            </td>
+                            <td th:text="${item.dataAbertura == null ? '-' : #temporals.format(item.dataAbertura, 'dd/MM/yyyy HH:mm')}">-</td>
+                            <td class="action-cell">
+                                <div class="row-actions">
+                                    <a class="btn btn-sm btn-edit" th:href="@{/chamados/{id}/editar(id=${item.id})}">Editar</a>
+                                    <form th:if="${item.status.name() == 'ABERTO'}" th:action="@{/chamados/{id}/status/EM_ANDAMENTO(id=${item.id})}" method="post">
+                                        <button class="btn btn-sm btn-progress" type="submit">Andamento</button>
+                                    </form>
+                                    <form th:if="${item.status.name() != 'CONCLUIDO'}" th:action="@{/chamados/{id}/status/CONCLUIDO(id=${item.id})}" method="post">
+                                        <button class="btn btn-sm btn-complete" type="submit">Concluir</button>
+                                    </form>
+                                    <form th:action="@{/chamados/{id}/excluir(id=${item.id})}" method="post" data-confirm="Excluir este chamado?">
+                                        <button class="btn btn-sm btn-delete" type="submit">Excluir</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
