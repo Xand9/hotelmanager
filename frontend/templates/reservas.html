@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <img th:src="@{/img/izzy-logo.svg}" alt="Izzy Hotel">
+            <small>Conforto para Profissionais em Movimento</small>
+        </div>
+        <nav class="nav">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/quartos}">Quartos</a>
+            <a th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
+            <a th:href="@{/hospedes}">Hóspedes</a>
+            <a class="active" th:href="@{/reservas}">Reservas</a>
+            <a th:href="@{/chamados}">Chamados</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Hospedagem</div>
+                <h1>Reservas e check-in</h1>
+                <p class="subtitle">Selecione hóspede, quarto e datas para criar a reserva. Depois acompanhe o fluxo de check-in, check-out e cancelamento.</p>
+                <div class="status-legend">
+                    <span class="badge badge-RESERVADA">Reservada</span>
+                    <span class="badge badge-CHECKIN_REALIZADO">Check-in realizado</span>
+                    <span class="badge badge-CHECKOUT_REALIZADO">Check-out realizado</span>
+                    <span class="badge badge-CANCELADA">Cancelada</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="grid module-layout">
+            <form class="form-card form-grid" th:action="@{/reservas/salvar}" th:object="${reservaForm}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h2 th:text="*{id} == null ? 'Nova reserva' : 'Editar reserva'">Nova reserva</h2>
+                        <p>O sistema calcula automaticamente diárias e valor total com base no quarto escolhido.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" th:if="${mensagemErro}" th:text="${mensagemErro}">
+                    O quarto nao esta disponivel para reserva.
+                </div>
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field">
+                    <label>Hóspede</label>
+                    <select th:field="*{hospedeId}">
+                        <option value="">Selecione o hóspede</option>
+                        <option th:each="hospede : ${hospedes}" th:value="${hospede.id}" th:text="${hospede.nome + ' - ' + hospede.documento}"></option>
+                    </select>
+                    <small>Cadastre o hóspede antes de criar a reserva.</small>
+                </div>
+
+                <div class="field">
+                    <label>Quarto</label>
+                    <select th:field="*{quartoId}">
+                        <option value="">Selecione o quarto</option>
+                        <option th:each="quarto : ${quartos}"
+                                th:value="${quarto.id}"
+                                th:disabled="${quarto.status.name() != 'DISPONIVEL'}"
+                                th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.tipo.descricao + ' - ' + quarto.status.descricao}">
+                        </option>
+                    </select>
+                    <small>Somente quartos com status Disponível podem ser selecionados para nova reserva.</small>
+                </div>
+
+                <div class="field">
+                    <label>Data de entrada</label>
+                    <input type="date" th:field="*{dataEntrada}">
+                </div>
+
+                <div class="field">
+                    <label>Data de saída</label>
+                    <input type="date" th:field="*{dataSaida}">
+                </div>
+
+                <div class="field">
+                    <label>Observações</label>
+                    <textarea th:field="*{observacoes}" placeholder="Ex: hóspede chegará após 20h, empresa conveniada ou preferência de andar."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary-action" type="submit">Salvar reserva</button>
+                    <a class="btn btn-secondary" th:href="@{/reservas}">Limpar</a>
+                </div>
+            </form>
+
+            <div class="data-card">
+                <div class="section-title">
+                    <div>
+                        <h2>Reservas</h2>
+                        <p>Ações disponíveis mudam conforme o status: primeiro check-in, depois check-out.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table-modern">
+                        <thead>
+                        <tr>
+                            <th>Hóspede</th>
+                            <th>Quarto</th>
+                            <th>Período</th>
+                            <th>Status</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(reservas)}">
+                            <td colspan="6" class="empty">
+                                <strong>Nenhuma reserva cadastrada.</strong>
+                                Crie uma reserva para iniciar o controle de hospedagens.
+                            </td>
+                        </tr>
+                        <tr th:each="item : ${reservas}">
+                            <td>
+                                <div class="cell-primary">
+                                    <span class="cell-title" th:text="${item.hospede.nome}">Hóspede</span>
+                                    <span class="cell-subtitle" th:text="${item.hospede.documento}">Documento</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-primary">
+                                    <span class="cell-title" th:text="${'Quarto ' + item.quarto.numero}">Quarto 101</span>
+                                    <span class="cell-subtitle" th:text="${item.quarto.tipo.descricao}">Casal</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-primary">
+                                    <span th:text="${#temporals.format(item.dataEntrada, 'dd/MM/yyyy') + ' a ' + #temporals.format(item.dataSaida, 'dd/MM/yyyy')}">20/05 a 23/05</span>
+                                    <span class="cell-subtitle" th:text="${item.quantidadeDiarias + ' diária(s)'}">3 diárias</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Reservada</span>
+                            </td>
+                            <td class="cell-money" th:text="${#numbers.formatCurrency(item.valorTotal)}">R$ 0,00</td>
+                            <td class="action-cell">
+                                <div class="row-actions">
+                                    <a class="btn btn-sm btn-edit" th:if="${item.status.name() == 'RESERVADA'}" th:href="@{/reservas/{id}/editar(id=${item.id})}">Editar</a>
+                                    <form th:if="${item.status.name() == 'RESERVADA'}" th:action="@{/reservas/{id}/checkin(id=${item.id})}" method="post">
+                                        <button class="btn btn-sm btn-checkin" type="submit">Check-in</button>
+                                    </form>
+                                    <form th:if="${item.status.name() == 'CHECKIN_REALIZADO'}" th:action="@{/reservas/{id}/checkout(id=${item.id})}" method="post">
+                                        <button class="btn btn-sm btn-checkout" type="submit">Check-out</button>
+                                    </form>
+                                    <form th:if="${item.status.name() == 'RESERVADA'}" th:action="@{/reservas/{id}/cancelar(id=${item.id})}" method="post" data-confirm="Cancelar esta reserva?">
+                                        <button class="btn btn-sm btn-cancel" type="submit">Cancelar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

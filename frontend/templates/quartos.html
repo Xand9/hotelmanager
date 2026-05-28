@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quartos | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <img th:src="@{/img/izzy-logo.svg}" alt="Izzy Hotel">
+            <small>Conforto para Profissionais em Movimento</small>
+        </div>
+        <nav class="nav">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a class="active" th:href="@{/quartos}">Quartos</a>
+            <a th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
+            <a th:href="@{/hospedes}">Hóspedes</a>
+            <a th:href="@{/reservas}">Reservas</a>
+            <a th:href="@{/chamados}">Chamados</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Acomodações</div>
+                <h1>Situação dos quartos</h1>
+                <p class="subtitle">Acompanhe os quartos cadastrados e atualize rapidamente a condição operacional de cada unidade.</p>
+                <div class="status-legend">
+                    <span class="badge badge-DISPONIVEL">Disponível</span>
+                    <span class="badge badge-OCUPADO">Ocupado</span>
+                    <span class="badge badge-EM_LIMPEZA">Em limpeza</span>
+                    <span class="badge badge-EM_MANUTENCAO">Em manutenção</span>
+                </div>
+            </div>
+            <a class="btn btn-primary-action" th:href="@{/quartos/cadastro}">Cadastrar novo quarto</a>
+        </div>
+
+        <section class="data-card">
+            <div class="section-title">
+                <div>
+                    <h2>Quartos cadastrados</h2>
+                    <p>Esta tela é apenas para consulta e atualização de status. O cadastro de novos quartos fica em uma aba separada.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="table-modern">
+                    <thead>
+                    <tr>
+                        <th>Quarto</th>
+                        <th>Capacidade</th>
+                        <th>Diária</th>
+                        <th>Status atual</th>
+                        <th>Observações</th>
+                        <th>Ações rápidas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(quartos)}">
+                        <td colspan="6" class="empty">
+                            <strong>Nenhum quarto cadastrado.</strong>
+                            Use a aba Cadastrar quarto para adicionar as acomodações do hotel.
+                        </td>
+                    </tr>
+                    <tr th:each="item : ${quartos}">
+                        <td>
+                            <div class="cell-primary">
+                                <span class="cell-title" th:text="${'Quarto ' + item.numero}">Quarto 101</span>
+                                <span class="cell-subtitle" th:text="${item.tipo.descricao}">Casal</span>
+                            </div>
+                        </td>
+                        <td th:text="${item.capacidade + ' pessoa(s)'}">2 pessoas</td>
+                        <td class="cell-money" th:text="${#numbers.formatCurrency(item.valorDiaria)}">R$ 0,00</td>
+                        <td>
+                            <span class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Disponível</span>
+                        </td>
+                        <td>
+                            <span class="muted-line" th:text="${item.observacoes == null || item.observacoes.isBlank() ? 'Sem observações' : item.observacoes}">Sem observações</span>
+                        </td>
+                        <td class="action-cell">
+                            <div class="row-actions">
+                                <a class="btn btn-sm btn-edit" th:href="@{/quartos/{id}/editar(id=${item.id})}">Editar cadastro</a>
+                                <form th:action="@{/quartos/{id}/status/DISPONIVEL(id=${item.id})}" method="post">
+                                    <button class="btn btn-sm btn-status-available" type="submit">Disponível</button>
+                                </form>
+                                <form th:action="@{/quartos/{id}/status/OCUPADO(id=${item.id})}" method="post">
+                                    <button class="btn btn-sm btn-status-occupied" type="submit">Ocupado</button>
+                                </form>
+                                <form th:action="@{/quartos/{id}/status/EM_LIMPEZA(id=${item.id})}" method="post">
+                                    <button class="btn btn-sm btn-status-cleaning" type="submit">Limpeza</button>
+                                </form>
+                                <form th:action="@{/quartos/{id}/status/EM_MANUTENCAO(id=${item.id})}" method="post">
+                                    <button class="btn btn-sm btn-status-maintenance" type="submit">Manutenção</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>HotelManager - Documentação de Produto</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2.2cm 2cm 2cm 2cm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1f1f1f;
+      background: #fbf1df;
+      line-height: 1.35;
+      font-size: 12pt;
+    }
+
+    .page {
+      page-break-after: always;
+      min-height: 920px;
+    }
+
+    .cover {
+      text-align: center;
+      padding-top: 180px;
+    }
+
+    .cover h1 {
+      font-size: 48pt;
+      color: #5b1f0b;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .cover h2 {
+      font-size: 20pt;
+      color: #6d2a10;
+      font-weight: normal;
+      margin-top: 0;
+    }
+
+    .cover p {
+      font-size: 14pt;
+      margin: 8px 0;
+    }
+
+    .section-header {
+      background: #6b1f06;
+      color: #fff7ef;
+      border-radius: 22px;
+      padding: 18px 28px;
+      margin: 0 0 40px 0;
+      font-size: 26pt;
+      font-weight: normal;
+    }
+
+    .section-number {
+      display: inline-block;
+      background: #c2470a;
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 12px 24px;
+      margin-right: 22px;
+      font-weight: bold;
+    }
+
+    h1 {
+      color: #6b1f06;
+      font-size: 28pt;
+      margin: 30px 0 14px 0;
+    }
+
+    h2 {
+      color: #6b1f06;
+      font-size: 22pt;
+      margin: 26px 0 12px 0;
+    }
+
+    h3 {
+      color: #6b1f06;
+      font-size: 16pt;
+      margin: 18px 0 8px 0;
+    }
+
+    p {
+      text-align: justify;
+      margin: 10px 0 14px 0;
+    }
+
+    ul, ol {
+      margin-top: 6px;
+      margin-bottom: 14px;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 22px 0;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    th {
+      background: #eee9e1;
+      color: #111111;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    th, td {
+      border: 1px solid #6d4a35;
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    .sumario td {
+      border: none;
+      font-weight: bold;
+      font-size: 14pt;
+      padding: 5px 0;
+      background: transparent;
+    }
+
+    .sumario .num {
+      width: 90%;
+    }
+
+    .small {
+      font-size: 10.5pt;
+    }
+
+    .code {
+      font-family: Consolas, monospace;
+      background: #f4eadc;
+      padding: 10px;
+      border: 1px solid #c8a98e;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page cover">
+  <h1>HotelManager</h1>
+  <h2>Documentação de Produto</h2>
+  <h2>Sistema Gerencial para Hotel e Pousada</h2>
+  <br>
+  <p><strong>Tecnologia principal:</strong> Java com Spring Boot</p>
+  <p><strong>Banco de dados sugerido:</strong> MySQL</p>
+  <p><strong>Tipo de sistema:</strong> API REST com arquitetura em camadas</p>
+  <p><strong>Finalidade:</strong> Gerenciar quartos, hóspedes, reservas, hospedagens, check-in, check-out, consumo, pagamentos, limpeza, manutenção e indicadores administrativos de um estabelecimento hoteleiro.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">00</span>Sumário</div>
+  <table class="sumario">
+    <tr><td class="num">01 - Introdução e Escopo</td><td>03</td></tr>
+    <tr><td class="num">02 - Objetivo do Sistema</td><td>04</td></tr>
+    <tr><td class="num">03 - Público-Alvo e Atores</td><td>05</td></tr>
+    <tr><td class="num">04 - Funcionalidades Principais</td><td>06</td></tr>
+    <tr><td class="num">05 - Regras de Negócio</td><td>12</td></tr>
+    <tr><td class="num">06 - Entidades do Sistema</td><td>14</td></tr>
+    <tr><td class="num">07 - Relacionamentos entre Entidades</td><td>17</td></tr>
+    <tr><td class="num">08 - Estrutura do Projeto Spring Boot</td><td>18</td></tr>
+    <tr><td class="num">09 - Endpoints REST Sugeridos</td><td>20</td></tr>
+    <tr><td class="num">10 - Tecnologias Sugeridas</td><td>23</td></tr>
+    <tr><td class="num">11 - Banco de Dados</td><td>24</td></tr>
+    <tr><td class="num">12 - Fluxo Básico do Sistema</td><td>25</td></tr>
+    <tr><td class="num">13 - Requisitos Funcionais</td><td>26</td></tr>
+    <tr><td class="num">14 - Requisitos Não Funcionais</td><td>29</td></tr>
+    <tr><td class="num">15 - Considerações Finais</td><td>31</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">01</span>Introdução e Escopo</div>
+  <h1>Introdução</h1>
+  <p>O projeto <strong>HotelManager</strong> tem como objetivo desenvolver um sistema para gerenciamento de hotel, pousada ou pequeno estabelecimento de hospedagem, substituindo controles manuais, planilhas dispersas e registros informais por uma solução digital organizada, segura e de fácil utilização.</p>
+  <p>Em um ambiente hoteleiro, informações como disponibilidade de quartos, reservas, check-ins, check-outs, pagamentos, consumos e limpeza precisam estar sempre atualizadas. Quando esses dados são controlados manualmente, há maior risco de conflito de reservas, cobrança incorreta, perda de histórico do hóspede e dificuldade na tomada de decisões administrativas.</p>
+  <p>O HotelManager propõe centralizar essas operações em um sistema desenvolvido em <strong>Java com Spring Boot</strong>, utilizando banco de dados relacional para armazenar as informações principais do hotel e disponibilizando uma <strong>API REST</strong> para comunicação com futuras interfaces web, mobile ou integrações externas.</p>
+  <h1>Escopo do Projeto</h1>
+  <p>O sistema será responsável por controlar as principais rotinas operacionais e administrativas de um hotel, incluindo cadastro de quartos, cadastro de hóspedes, reservas, hospedagens, check-in, check-out, serviços adicionais, pagamentos, limpeza, manutenção e relatórios administrativos.</p>
+  <p>Nesta primeira versão, o sistema não terá como foco integrações com plataformas externas de reserva, emissão de nota fiscal, integração bancária automática, controle de fechaduras eletrônicas, aplicativo mobile nativo ou motor público de reservas online.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">02</span>Objetivo do Sistema</div>
+  <h1>Objetivo Geral</h1>
+  <p>Desenvolver um sistema completo para gerenciamento de hotel ou pousada, permitindo o controle centralizado das operações de hospedagem, reservas, quartos, hóspedes, pagamentos, consumos, limpeza, manutenção e indicadores administrativos.</p>
+  <h1>Objetivos Específicos</h1>
+  <ul>
+    <li>Permitir o cadastro e gerenciamento de quartos.</li>
+    <li>Controlar o status dos quartos em tempo real.</li>
+    <li>Permitir o cadastro de hóspedes.</li>
+    <li>Registrar reservas com datas de entrada e saída.</li>
+    <li>Evitar conflitos de reserva para o mesmo quarto.</li>
+    <li>Calcular automaticamente a quantidade de diárias.</li>
+    <li>Calcular valores previstos e valores finais de hospedagem.</li>
+    <li>Permitir check-in com ou sem reserva.</li>
+    <li>Permitir check-out com fechamento financeiro.</li>
+    <li>Registrar consumos e serviços adicionais.</li>
+    <li>Registrar pagamentos totais ou parciais.</li>
+    <li>Controlar limpeza e manutenção de quartos.</li>
+    <li>Exibir relatórios e indicadores administrativos.</li>
+    <li>Organizar o desenvolvimento em camadas usando Spring Boot.</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">03</span>Público-Alvo e Atores</div>
+  <h1>Público-Alvo</h1>
+  <p>O HotelManager é destinado a hotéis de pequeno e médio porte, pousadas, hostels, estabelecimentos familiares de hospedagem, funcionários de recepção, administradores, gerentes, equipes de limpeza, equipes de manutenção e responsáveis financeiros.</p>
+  <h1>Tabela de Atores</h1>
+  <table>
+    <tr><th>Tipo de Usuário</th><th>Papel no Sistema</th><th>Permissões</th><th>Restrições</th></tr>
+    <tr><td>Administrador/Gerente</td><td>Responsável pela gestão geral do hotel.</td><td>Cadastrar quartos, visualizar relatórios, acompanhar receita, gerenciar reservas, hospedagens e pagamentos.</td><td>Deve possuir acesso restrito e controlado.</td></tr>
+    <tr><td>Recepcionista</td><td>Responsável pelo atendimento ao hóspede.</td><td>Cadastrar hóspedes, criar reservas, realizar check-in, realizar check-out e consultar quartos disponíveis.</td><td>Não deve alterar configurações administrativas críticas.</td></tr>
+    <tr><td>Equipe de Limpeza</td><td>Responsável pela atualização do estado dos quartos.</td><td>Visualizar quartos sujos, marcar quarto em limpeza e finalizar limpeza.</td><td>Não deve acessar dados financeiros.</td></tr>
+    <tr><td>Equipe de Manutenção</td><td>Responsável por quartos indisponíveis por reparo.</td><td>Registrar manutenção, informar motivo e liberar quarto após conclusão.</td><td>Não deve realizar reservas ou pagamentos.</td></tr>
+    <tr><td>Financeiro</td><td>Responsável pelo controle de pagamentos.</td><td>Consultar hospedagens, registrar pagamentos e acompanhar status financeiro.</td><td>Não deve alterar dados operacionais sem autorização.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">04</span>Funcionalidades Principais</div>
+  <h1>Módulo de Quartos</h1>
+  <p>O módulo de quartos será responsável por controlar o cadastro e a situação operacional dos quartos do hotel.</p>
+  <ul>
+    <li>Cadastrar, editar, excluir ou inativar quarto.</li>
+    <li>Definir número do quarto, tipo, capacidade, valor da diária, descrição e status.</li>
+    <li>Controlar se o quarto está ativo ou inativo.</li>
+    <li>Alterar status do quarto conforme operação do hotel.</li>
+  </ul>
+  <p><strong>Tipos sugeridos:</strong> solteiro, casal, luxo, suíte, família, executivo e presidencial.</p>
+  <p><strong>Status possíveis:</strong> disponível, ocupado, reservado, sujo, em limpeza e em manutenção.</p>
+
+  <h1>Módulo de Hóspedes</h1>
+  <p>O módulo de hóspedes permitirá manter os dados das pessoas que utilizam os serviços do hotel.</p>
+  <ul>
+    <li>Cadastrar hóspede.</li>
+    <li>Editar dados do hóspede.</li>
+    <li>Excluir ou inativar cadastro.</li>
+    <li>Consultar histórico de hospedagens.</li>
+    <li>Consultar reservas vinculadas.</li>
+  </ul>
+  <p><strong>Dados principais:</strong> nome, CPF ou documento, telefone, e-mail, endereço, data de cadastro e observações.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">04</span>Funcionalidades Principais</div>
+  <h1>Módulo de Reservas</h1>
+  <p>O módulo de reservas permitirá registrar hospedagens futuras, garantindo controle de disponibilidade e evitando conflitos.</p>
+  <ul>
+    <li>Criar reserva.</li>
+    <li>Selecionar hóspede e quarto.</li>
+    <li>Definir data de entrada e data de saída.</li>
+    <li>Calcular quantidade de diárias.</li>
+    <li>Calcular valor previsto.</li>
+    <li>Alterar, cancelar e finalizar reserva.</li>
+    <li>Registrar não comparecimento.</li>
+  </ul>
+  <p><strong>Status possíveis:</strong> ativa, cancelada, finalizada e não compareceu.</p>
+
+  <h1>Módulo de Check-in</h1>
+  <p>O módulo de check-in será utilizado para confirmar a entrada do hóspede no hotel.</p>
+  <ul>
+    <li>Confirmar entrada do hóspede.</li>
+    <li>Validar se existe reserva ativa.</li>
+    <li>Permitir check-in direto quando houver quarto disponível.</li>
+    <li>Registrar data e hora de entrada.</li>
+    <li>Vincular hóspede ao quarto.</li>
+    <li>Criar hospedagem em andamento.</li>
+    <li>Alterar status do quarto para ocupado.</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">04</span>Funcionalidades Principais</div>
+  <h1>Módulo de Check-out</h1>
+  <p>O módulo de check-out será responsável por finalizar a hospedagem e calcular os valores devidos.</p>
+  <ul>
+    <li>Finalizar hospedagem.</li>
+    <li>Registrar data e hora de saída.</li>
+    <li>Calcular valor das diárias.</li>
+    <li>Somar consumos e serviços adicionais.</li>
+    <li>Calcular valor total da hospedagem.</li>
+    <li>Registrar pagamento.</li>
+    <li>Definir status financeiro.</li>
+    <li>Alterar quarto para sujo após a saída.</li>
+  </ul>
+
+  <h1>Módulo de Limpeza</h1>
+  <ul>
+    <li>Listar quartos sujos.</li>
+    <li>Marcar quarto como em limpeza.</li>
+    <li>Registrar início da limpeza.</li>
+    <li>Registrar responsável pela limpeza.</li>
+    <li>Finalizar limpeza.</li>
+    <li>Alterar quarto para disponível após limpeza.</li>
+    <li>Consultar histórico de limpezas.</li>
+  </ul>
+  <p><strong>Status possíveis:</strong> pendente, em andamento e finalizada.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">04</span>Funcionalidades Principais</div>
+  <h1>Módulo de Manutenção</h1>
+  <ul>
+    <li>Marcar quarto como em manutenção.</li>
+    <li>Informar motivo da manutenção.</li>
+    <li>Registrar data de início e data de fim.</li>
+    <li>Bloquear quarto para novas reservas.</li>
+    <li>Finalizar manutenção.</li>
+    <li>Liberar quarto após manutenção.</li>
+    <li>Consultar histórico de manutenções.</li>
+  </ul>
+  <p><strong>Status possíveis:</strong> aberta, em andamento e finalizada.</p>
+
+  <h1>Módulo Financeiro</h1>
+  <ul>
+    <li>Registrar pagamento.</li>
+    <li>Consultar pagamentos.</li>
+    <li>Associar pagamento a uma hospedagem.</li>
+    <li>Controlar pagamentos pendentes, parciais e quitados.</li>
+    <li>Calcular valor total da hospedagem.</li>
+    <li>Registrar forma de pagamento.</li>
+  </ul>
+  <p><strong>Formas de pagamento:</strong> dinheiro, cartão, Pix e outro.</p>
+  <p><strong>Status do pagamento:</strong> pendente, pago e parcial.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">04</span>Funcionalidades Principais</div>
+  <h1>Módulo de Serviços e Consumo</h1>
+  <p>Esse módulo permitirá registrar serviços adicionais utilizados pelo hóspede durante a hospedagem.</p>
+  <ul>
+    <li>Cadastrar serviços adicionais.</li>
+    <li>Editar serviços.</li>
+    <li>Inativar serviços.</li>
+    <li>Vincular consumo à hospedagem.</li>
+    <li>Informar quantidade consumida.</li>
+    <li>Calcular valor total do consumo.</li>
+    <li>Somar consumos ao check-out.</li>
+  </ul>
+  <p><strong>Serviços sugeridos:</strong> frigobar, lavanderia, café da manhã, estacionamento, serviço de quarto e consumos diversos.</p>
+
+  <h1>Módulo de Dashboard</h1>
+  <p>O dashboard apresentará uma visão resumida da situação operacional e financeira do hotel.</p>
+  <ul>
+    <li>Total de quartos.</li>
+    <li>Quartos disponíveis, ocupados, reservados, sujos, em limpeza e em manutenção.</li>
+    <li>Reservas do dia.</li>
+    <li>Check-ins do dia.</li>
+    <li>Check-outs do dia.</li>
+    <li>Receita total.</li>
+    <li>Taxa de ocupação.</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">05</span>Regras de Negócio</div>
+  <h1>Tabela de Regras de Negócio</h1>
+  <table>
+    <tr><th>ID</th><th>Regra</th></tr>
+    <tr><td>RN01</td><td>Um quarto ocupado não pode ser reservado por outro hóspede.</td></tr>
+    <tr><td>RN02</td><td>Um quarto em manutenção não pode ser reservado.</td></tr>
+    <tr><td>RN03</td><td>Um quarto sujo não deve aparecer como disponível.</td></tr>
+    <tr><td>RN04</td><td>Ao realizar check-out, o quarto deve mudar automaticamente para o status sujo.</td></tr>
+    <tr><td>RN05</td><td>Após a finalização da limpeza, o quarto pode voltar para disponível.</td></tr>
+    <tr><td>RN06</td><td>A reserva deve calcular automaticamente o valor previsto com base na quantidade de diárias.</td></tr>
+    <tr><td>RN07</td><td>O check-in só pode ser realizado se houver uma reserva válida ou um quarto disponível.</td></tr>
+    <tr><td>RN08</td><td>O check-out deve calcular diárias, consumos e serviços adicionais.</td></tr>
+    <tr><td>RN09</td><td>O sistema deve impedir conflito de datas para o mesmo quarto.</td></tr>
+    <tr><td>RN10</td><td>O hóspede precisa estar cadastrado antes de uma reserva ou check-in.</td></tr>
+    <tr><td>RN11</td><td>Uma reserva cancelada não pode ser utilizada para check-in.</td></tr>
+    <tr><td>RN12</td><td>Uma hospedagem finalizada não pode receber novos consumos.</td></tr>
+    <tr><td>RN13</td><td>Um pagamento não pode ultrapassar o valor total da hospedagem, salvo regra administrativa futura.</td></tr>
+    <tr><td>RN14</td><td>Um quarto inativo não deve aparecer em reservas ou check-ins.</td></tr>
+    <tr><td>RN15</td><td>O status de pagamento deve ser atualizado conforme os valores pagos.</td></tr>
+    <tr><td>RN16</td><td>A diária deve considerar a diferença entre data de entrada e data de saída.</td></tr>
+    <tr><td>RN17</td><td>Uma manutenção aberta deve bloquear automaticamente o quarto.</td></tr>
+    <tr><td>RN18</td><td>Um quarto em limpeza não deve ser selecionado para nova hospedagem.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">06</span>Entidades do Sistema</div>
+  <h1>Classes Java Sugeridas</h1>
+  <table>
+    <tr><th>Entidade</th><th>Atributos</th></tr>
+    <tr><td>Quarto</td><td>id, numero, tipo, capacidade, valorDiaria, status, descricao, ativo</td></tr>
+    <tr><td>Hospede</td><td>id, nome, documento, telefone, email, endereco, dataCadastro, observacoes</td></tr>
+    <tr><td>Reserva</td><td>id, hospede, quarto, dataEntrada, dataSaida, quantidadeDiarias, status, valorPrevisto, dataCriacao</td></tr>
+    <tr><td>Hospedagem</td><td>id, hospede, quarto, reserva, dataCheckin, dataCheckout, valorDiarias, valorConsumos, valorTotal, status</td></tr>
+    <tr><td>Pagamento</td><td>id, hospedagem, valor, formaPagamento, status, dataPagamento, observacao</td></tr>
+    <tr><td>Servico</td><td>id, nome, descricao, valor, ativo</td></tr>
+    <tr><td>Consumo</td><td>id, hospedagem, servico, quantidade, valorUnitario, valorTotal, dataConsumo</td></tr>
+    <tr><td>Manutencao</td><td>id, quarto, descricao, dataInicio, dataFim, responsavel, status</td></tr>
+    <tr><td>Limpeza</td><td>id, quarto, dataInicio, dataFim, responsavel, status, observacao</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">07</span>Relacionamentos entre Entidades</div>
+  <h1>Relacionamentos Esperados</h1>
+  <ul>
+    <li>Um hóspede pode possuir várias reservas.</li>
+    <li>Uma reserva pertence a um único hóspede.</li>
+    <li>Um quarto pode possuir várias reservas em datas diferentes.</li>
+    <li>Uma reserva pertence a um único quarto.</li>
+    <li>Uma hospedagem pertence a um hóspede.</li>
+    <li>Uma hospedagem pertence a um quarto.</li>
+    <li>Uma hospedagem pode ser originada de uma reserva.</li>
+    <li>Uma hospedagem pode possuir vários consumos.</li>
+    <li>Um consumo pertence a uma hospedagem.</li>
+    <li>Um consumo está vinculado a um serviço.</li>
+    <li>Uma hospedagem pode possuir um ou mais pagamentos.</li>
+    <li>Um pagamento pertence a uma hospedagem.</li>
+    <li>Um quarto pode possuir vários registros de limpeza.</li>
+    <li>Uma limpeza pertence a um quarto.</li>
+    <li>Um quarto pode possuir vários registros de manutenção.</li>
+    <li>Uma manutenção pertence a um quarto.</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">08</span>Estrutura do Projeto Spring Boot</div>
+  <h1>Pacotes Sugeridos</h1>
+  <div class="code">com.hotelmanager
+com.hotelmanager.model
+com.hotelmanager.repository
+com.hotelmanager.service
+com.hotelmanager.controller
+com.hotelmanager.dto
+com.hotelmanager.enums
+com.hotelmanager.exception</div>
+
+  <h1>Responsabilidade das Camadas</h1>
+  <table>
+    <tr><th>Camada</th><th>Responsabilidade</th></tr>
+    <tr><td>model/entity</td><td>Representar as entidades do banco de dados usando classes Java e anotações JPA.</td></tr>
+    <tr><td>repository</td><td>Realizar comunicação com o banco de dados por meio do Spring Data JPA.</td></tr>
+    <tr><td>service</td><td>Concentrar regras de negócio, validações e processamento das operações.</td></tr>
+    <tr><td>controller</td><td>Disponibilizar endpoints REST para entrada e saída de dados.</td></tr>
+    <tr><td>dto</td><td>Transportar dados entre cliente e servidor sem expor diretamente as entidades.</td></tr>
+    <tr><td>enums</td><td>Definir valores fixos como status de quarto, status de reserva e forma de pagamento.</td></tr>
+    <tr><td>exception</td><td>Centralizar exceções e tratamentos de erro do sistema.</td></tr>
+  </table>
+
+  <p><strong>Enums sugeridos:</strong> TipoQuarto, StatusQuarto, StatusReserva, StatusHospedagem, FormaPagamento, StatusPagamento, StatusLimpeza e StatusManutencao.</p>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">09</span>Endpoints REST Sugeridos</div>
+  <h1>Endpoints por Módulo</h1>
+  <table class="small">
+    <tr><th>Módulo</th><th>Endpoints</th></tr>
+    <tr><td>Quartos</td><td>GET /quartos<br>GET /quartos/{id}<br>GET /quartos/disponiveis<br>POST /quartos<br>PUT /quartos/{id}<br>DELETE /quartos/{id}<br>PATCH /quartos/{id}/status</td></tr>
+    <tr><td>Hóspedes</td><td>GET /hospedes<br>GET /hospedes/{id}<br>GET /hospedes/{id}/historico<br>POST /hospedes<br>PUT /hospedes/{id}<br>DELETE /hospedes/{id}</td></tr>
+    <tr><td>Reservas</td><td>GET /reservas<br>GET /reservas/{id}<br>GET /reservas/data<br>POST /reservas<br>PUT /reservas/{id}<br>PATCH /reservas/{id}/cancelar<br>PATCH /reservas/{id}/finalizar<br>PATCH /reservas/{id}/nao-compareceu</td></tr>
+    <tr><td>Check-in</td><td>POST /checkin<br>POST /checkin/reserva/{reservaId}<br>POST /checkin/direto</td></tr>
+    <tr><td>Check-out</td><td>POST /checkout<br>POST /checkout/hospedagem/{hospedagemId}</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">09</span>Endpoints REST Sugeridos</div>
+  <table class="small">
+    <tr><th>Módulo</th><th>Endpoints</th></tr>
+    <tr><td>Limpeza</td><td>GET /limpezas<br>GET /limpezas/quartos-sujos<br>POST /limpezas<br>PATCH /limpezas/{id}/iniciar<br>PATCH /limpezas/{id}/finalizar</td></tr>
+    <tr><td>Manutenção</td><td>GET /manutencoes<br>POST /manutencoes<br>PATCH /manutencoes/{id}/iniciar<br>PATCH /manutencoes/{id}/finalizar</td></tr>
+    <tr><td>Serviços e Consumos</td><td>GET /servicos<br>POST /servicos<br>PUT /servicos/{id}<br>DELETE /servicos/{id}<br>GET /consumos<br>POST /consumos<br>GET /hospedagens/{id}/consumos</td></tr>
+    <tr><td>Financeiro</td><td>GET /pagamentos<br>GET /pagamentos/{id}<br>POST /pagamentos<br>GET /hospedagens/{id}/pagamentos</td></tr>
+    <tr><td>Dashboard</td><td>GET /dashboard/resumo<br>GET /dashboard/ocupacao<br>GET /dashboard/receita</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">10</span>Tecnologias Sugeridas</div>
+  <h1>Tabela de Tecnologias</h1>
+  <table>
+    <tr><th>Tecnologia</th><th>Finalidade</th></tr>
+    <tr><td>Java</td><td>Linguagem principal do sistema.</td></tr>
+    <tr><td>Spring Boot</td><td>Framework para criação da aplicação backend.</td></tr>
+    <tr><td>Spring Web</td><td>Criação de endpoints REST.</td></tr>
+    <tr><td>Spring Data JPA</td><td>Comunicação com o banco de dados.</td></tr>
+    <tr><td>Hibernate</td><td>Implementação ORM para persistência das entidades.</td></tr>
+    <tr><td>MySQL</td><td>Banco de dados relacional sugerido.</td></tr>
+    <tr><td>Maven</td><td>Gerenciamento de dependências e build do projeto.</td></tr>
+    <tr><td>API REST</td><td>Comunicação entre backend e futuras interfaces.</td></tr>
+    <tr><td>Insomnia/Postman</td><td>Testes dos endpoints.</td></tr>
+    <tr><td>Git/GitHub</td><td>Versionamento do código-fonte.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">11</span>Banco de Dados</div>
+  <h1>Banco Relacional</h1>
+  <p>O HotelManager deverá utilizar banco de dados relacional, preferencialmente <strong>MySQL</strong>, pois o sistema possui dados estruturados e relacionamentos claros entre quartos, hóspedes, reservas, hospedagens, pagamentos, consumos, limpezas e manutenções.</p>
+  <h1>Tabelas Principais</h1>
+  <ul>
+    <li>quartos</li>
+    <li>hospedes</li>
+    <li>reservas</li>
+    <li>hospedagens</li>
+    <li>pagamentos</li>
+    <li>servicos</li>
+    <li>consumos</li>
+    <li>limpezas</li>
+    <li>manutencoes</li>
+  </ul>
+  <h1>Observações</h1>
+  <ul>
+    <li>As tabelas devem possuir chave primária id.</li>
+    <li>Relacionamentos devem ser representados por chaves estrangeiras.</li>
+    <li>Campos de status devem preferencialmente usar enums no Java.</li>
+    <li>Exclusões importantes podem ser feitas por inativação lógica.</li>
+    <li>Datas de check-in, check-out, limpeza e manutenção devem ser registradas para histórico.</li>
+    <li>Valores monetários devem utilizar tipo adequado, como BigDecimal no Java.</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">12</span>Fluxo Básico do Sistema</div>
+  <h1>Fluxo Prático de Uso</h1>
+  <ol>
+    <li>O administrador cadastra os quartos do hotel.</li>
+    <li>A recepção cadastra o hóspede.</li>
+    <li>A recepção cria uma reserva ou realiza check-in direto.</li>
+    <li>O sistema valida a disponibilidade do quarto.</li>
+    <li>O sistema altera o status do quarto para ocupado.</li>
+    <li>Durante a hospedagem, consumos e serviços podem ser adicionados.</li>
+    <li>No check-out, o sistema calcula o valor das diárias.</li>
+    <li>O sistema soma consumos e serviços adicionais.</li>
+    <li>O pagamento é registrado.</li>
+    <li>A hospedagem é finalizada.</li>
+    <li>O quarto muda automaticamente para sujo.</li>
+    <li>A equipe de limpeza inicia e finaliza a limpeza.</li>
+    <li>Após a limpeza, o quarto volta para disponível.</li>
+    <li>O gerente acompanha indicadores pelo dashboard.</li>
+  </ol>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">13</span>Requisitos Funcionais</div>
+  <h1>Tabela de Requisitos Funcionais</h1>
+  <table class="small">
+    <tr><th>ID</th><th>Descrição</th></tr>
+    <tr><td>RF01</td><td>O sistema deve permitir cadastrar quartos.</td></tr>
+    <tr><td>RF02</td><td>O sistema deve permitir editar quartos.</td></tr>
+    <tr><td>RF03</td><td>O sistema deve permitir inativar quartos.</td></tr>
+    <tr><td>RF04</td><td>O sistema deve controlar o status dos quartos.</td></tr>
+    <tr><td>RF05</td><td>O sistema deve permitir cadastrar hóspedes.</td></tr>
+    <tr><td>RF06</td><td>O sistema deve permitir editar hóspedes.</td></tr>
+    <tr><td>RF07</td><td>O sistema deve permitir consultar histórico de hospedagens do hóspede.</td></tr>
+    <tr><td>RF08</td><td>O sistema deve permitir criar reservas.</td></tr>
+    <tr><td>RF09</td><td>O sistema deve permitir cancelar reservas.</td></tr>
+    <tr><td>RF10</td><td>O sistema deve calcular automaticamente a quantidade de diárias.</td></tr>
+    <tr><td>RF11</td><td>O sistema deve calcular o valor previsto da reserva.</td></tr>
+    <tr><td>RF12</td><td>O sistema deve impedir reserva com conflito de datas.</td></tr>
+    <tr><td>RF13</td><td>O sistema deve permitir realizar check-in.</td></tr>
+    <tr><td>RF14</td><td>O sistema deve permitir realizar check-in direto em quarto disponível.</td></tr>
+    <tr><td>RF15</td><td>O sistema deve alterar o quarto para ocupado após check-in.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">13</span>Requisitos Funcionais</div>
+  <table class="small">
+    <tr><th>ID</th><th>Descrição</th></tr>
+    <tr><td>RF16</td><td>O sistema deve permitir realizar check-out.</td></tr>
+    <tr><td>RF17</td><td>O sistema deve calcular o valor total da hospedagem.</td></tr>
+    <tr><td>RF18</td><td>O sistema deve permitir registrar consumos.</td></tr>
+    <tr><td>RF19</td><td>O sistema deve permitir cadastrar serviços adicionais.</td></tr>
+    <tr><td>RF20</td><td>O sistema deve permitir registrar pagamentos.</td></tr>
+    <tr><td>RF21</td><td>O sistema deve controlar pagamento pendente, parcial e pago.</td></tr>
+    <tr><td>RF22</td><td>O sistema deve alterar o quarto para sujo após check-out.</td></tr>
+    <tr><td>RF23</td><td>O sistema deve permitir registrar limpeza de quarto.</td></tr>
+    <tr><td>RF24</td><td>O sistema deve permitir liberar quarto após limpeza.</td></tr>
+    <tr><td>RF25</td><td>O sistema deve permitir registrar manutenção de quarto.</td></tr>
+    <tr><td>RF26</td><td>O sistema deve bloquear quarto em manutenção para reservas.</td></tr>
+    <tr><td>RF27</td><td>O sistema deve exibir dashboard administrativo.</td></tr>
+    <tr><td>RF28</td><td>O sistema deve listar reservas do dia.</td></tr>
+    <tr><td>RF29</td><td>O sistema deve listar check-ins e check-outs do dia.</td></tr>
+    <tr><td>RF30</td><td>O sistema deve apresentar indicadores de ocupação e receita.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">14</span>Requisitos Não Funcionais</div>
+  <h1>Tabela de Requisitos Não Funcionais</h1>
+  <table class="small">
+    <tr><th>ID</th><th>Descrição</th></tr>
+    <tr><td>RNF01</td><td>O sistema deve ser desenvolvido em Java com Spring Boot.</td></tr>
+    <tr><td>RNF02</td><td>O sistema deve utilizar banco de dados relacional MySQL.</td></tr>
+    <tr><td>RNF03</td><td>O sistema deve disponibilizar API REST.</td></tr>
+    <tr><td>RNF04</td><td>O sistema deve seguir arquitetura em camadas.</td></tr>
+    <tr><td>RNF05</td><td>O sistema deve utilizar Spring Data JPA para persistência.</td></tr>
+    <tr><td>RNF06</td><td>O sistema deve utilizar Maven para gerenciamento de dependências.</td></tr>
+    <tr><td>RNF07</td><td>O sistema deve ser versionado com Git.</td></tr>
+    <tr><td>RNF08</td><td>O código deve ser limpo, organizado e padronizado.</td></tr>
+    <tr><td>RNF09</td><td>O sistema deve possuir tratamento centralizado de erros.</td></tr>
+    <tr><td>RNF10</td><td>O sistema deve validar dados obrigatórios antes de salvar registros.</td></tr>
+    <tr><td>RNF11</td><td>O sistema deve utilizar nomes claros para classes, métodos e pacotes.</td></tr>
+    <tr><td>RNF12</td><td>O sistema deve permitir testes dos endpoints por Insomnia ou Postman.</td></tr>
+    <tr><td>RNF13</td><td>O sistema deve armazenar valores monetários com precisão adequada.</td></tr>
+    <tr><td>RNF14</td><td>O sistema deve manter histórico de operações importantes.</td></tr>
+    <tr><td>RNF15</td><td>O sistema deve ser preparado para futuras integrações.</td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <div class="section-header"><span class="section-number">15</span>Considerações Finais</div>
+  <h1>Conclusão</h1>
+  <p>A documentação do <strong>HotelManager</strong> servirá como base para o desenvolvimento de um sistema completo de gerenciamento hoteleiro em Java com Spring Boot.</p>
+  <p>O projeto foi planejado para atender necessidades reais de hotéis, pousadas e pequenos estabelecimentos de hospedagem, centralizando rotinas essenciais como cadastro de quartos, controle de reservas, check-in, check-out, consumos, pagamentos, limpeza, manutenção e indicadores administrativos.</p>
+  <p>Com essa documentação, será possível iniciar a implementação do sistema de forma organizada, seguindo uma estrutura clara de entidades, regras de negócio, endpoints, banco de dados, requisitos funcionais e requisitos não funcionais.</p>
+</div>
+
+</body>
+</html>
