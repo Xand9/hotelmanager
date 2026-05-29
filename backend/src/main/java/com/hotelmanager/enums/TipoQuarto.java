@@ -9,13 +9,13 @@ public enum TipoQuarto {
     EXECUTIVO("Executivo"),
     PRESIDENCIAL("Presidencial");
 
-    private final String descricao;
+    private final String descricao;//descição do Enum
 
-    TipoQuarto(String descricao) {
+    TipoQuarto(String descricao) {//Construtor do enum
         this.descricao = descricao;
     }
 
     public String getDescricao() {
-        return descricao;
+        return descricao;//Quando alguém pedir a descrição, entregue o texto guardado em descricao.
     }
 }

@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@Service//Essa classe é um componente de serviço. Pode criar um objeto dela e gerenciar para mim
+@Transactional//Se um método alterar dados no banco, faça isso dentro de uma transação segura.
 public class HospedeService {
 
     private final HospedeRepository hospedeRepository;

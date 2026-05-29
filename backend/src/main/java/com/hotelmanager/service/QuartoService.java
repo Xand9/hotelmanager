@@ -5,24 +5,24 @@ import com.hotelmanager.exception.RecursoNaoEncontradoException;
 import com.hotelmanager.model.Quarto;
 import com.hotelmanager.repository.QuartoRepository;
 import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;//"Spring essa classe é um service."
+import org.springframework.transaction.annotation.Transactional;//Controla transações com o banco.
 
-@Service
+@Service//Diz ao Spring que essa classe pertence à camada de serviço.
 @Transactional
 public class QuartoService {
 
-    private final QuartoRepository quartoRepository;
+    private final QuartoRepository quartoRepository;//Conversar com o banco.
 
-    public QuartoService(QuartoRepository quartoRepository) {
+    public QuartoService(QuartoRepository quartoRepository) {//Construtor
         this.quartoRepository = quartoRepository;
     }
 
-    public List<Quarto> listarTodos() {
+    public List<Quarto> listarTodos() {//Listar quartos ATIVOS
         return quartoRepository.findByAtivoTrue();
     }
 
-    public List<Quarto> listarDisponiveis() {
+    public List<Quarto> listarDisponiveis() {//Listar quartos ATIVOS DISPONIVEL
         return quartoRepository.findByAtivoTrueAndStatus(StatusQuarto.DISPONIVEL);
     }
 

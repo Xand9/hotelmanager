@@ -6,13 +6,13 @@ public enum StatusQuarto {
     EM_LIMPEZA("Em limpeza"),
     EM_MANUTENCAO("Em manutenção");
 
-    private final String descricao;
+    private final String descricao;//Descrição enum
 
-    StatusQuarto(String descricao) {
+    StatusQuarto(String descricao) {//Construtor do enum
         this.descricao = descricao;
     }
 
-    public String getDescricao() {
+    public String getDescricao() {//Quando alguém pedir a descrição, entregue o texto guardado em descricao.
         return descricao;
     }
 }

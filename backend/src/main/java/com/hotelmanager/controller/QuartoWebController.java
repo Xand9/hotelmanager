@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/quartos")
-public class QuartoWebController {
+public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devolve tela
 
     private final QuartoService quartoService;
 
