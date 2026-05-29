@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ChamadoInternoService {
 
-    private final ChamadoInternoRepository chamadoInternoRepository;
-    private final QuartoRepository quartoRepository;
+    private final ChamadoInternoRepository chamadoInternoRepository;//salvar, buscar, listar e excluir chamados
+    private final QuartoRepository quartoRepository;//buscar o quarto relacionado e alterar o status dele.
 
-    public ChamadoInternoService(
+    public ChamadoInternoService(//injeção de dependência
             ChamadoInternoRepository chamadoInternoRepository,
             QuartoRepository quartoRepository
     ) {

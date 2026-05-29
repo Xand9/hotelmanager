@@ -1,4 +1,4 @@
-package com.hotelmanager.dto;
+package com.hotelmanager.dto;//dados enviados do controller para o service criar ou atualizar uma reserva.
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;

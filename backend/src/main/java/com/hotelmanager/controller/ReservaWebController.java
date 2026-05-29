@@ -1,13 +1,15 @@
 package com.hotelmanager.controller;
 
-import com.hotelmanager.dto.ReservaFormDTO;
-import com.hotelmanager.dto.ReservaRequestDTO;
+import com.hotelmanager.dto.ReservaFormDTO;// conversa com a tela.
+import com.hotelmanager.dto.ReservaRequestDTO;// conversa com service.
 import com.hotelmanager.exception.RegraDeNegocioException;
 import com.hotelmanager.model.Reserva;
 import com.hotelmanager.service.HospedeService;
 import com.hotelmanager.service.QuartoService;
 import com.hotelmanager.service.ReservaService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

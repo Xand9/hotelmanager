@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -30,8 +31,10 @@ public class Hospede {
     private String nome;
 
     @NotBlank(message = "O documento do hospede e obrigatorio.")
+    @Size(max = 20, message = "O documento deve ter no maximo 20 caracteres.")
     private String documento;
 
+    @Size(max = 15, message = "O telefone deve ter no maximo 15 caracteres.")
     private String telefone;
 
     @Email(message = "Informe um e-mail valido.")

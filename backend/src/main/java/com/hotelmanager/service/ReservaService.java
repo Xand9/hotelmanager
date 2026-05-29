@@ -14,7 +14,7 @@ import com.hotelmanager.repository.ReservaRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.ChronoUnit;//Calcular diferença entre datas.
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +68,7 @@ public class ReservaService {
 
     public Reserva atualizar(Long id, ReservaRequestDTO dto) {
         Reserva reserva = buscarPorId(id);
+        //Só reservas ainda reservadas podem ser editadas.
 
         if (reserva.getStatus() != StatusReserva.RESERVADA) {
             throw new RegraDeNegocioException("Apenas reservas reservadas podem ser atualizadas.");

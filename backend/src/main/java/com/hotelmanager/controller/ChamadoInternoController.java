@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/chamados")
+@RequestMapping("/chamados")// Todas as rotas começam com /chamados
 public class ChamadoInternoController {
 
     private final ChamadoInternoService chamadoInternoService;

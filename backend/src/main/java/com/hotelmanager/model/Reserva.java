@@ -8,9 +8,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;//Define a coluna de ligação entre tabelas."INNER JOIN"
+
+
+import jakarta.persistence.ManyToOne;//Muitas reservas podem pertencer a um mesmo hóspede
+                                        //Muitas reservas podem ser feitas para o mesmo quarto, em datas diferentes.
 import jakarta.persistence.Table;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

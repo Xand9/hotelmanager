@@ -1,4 +1,4 @@
-package com.hotelmanager.dto;
+package com.hotelmanager.dto;//dados vindos da tela/formulário.
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;

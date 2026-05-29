@@ -142,6 +142,10 @@ textarea {
     padding: 28px 28px 40px;
 }
 
+.content-wide {
+    max-width: none;
+}
+
 .page-header {
     display: flex;
     align-items: flex-start;
@@ -250,6 +254,10 @@ h2 {
 .module-layout {
     grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
     align-items: start;
+}
+
+.hospedes-layout {
+    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
 }
 
 .form-page-layout {
@@ -597,6 +605,58 @@ textarea {
     border-spacing: 0;
     min-width: 780px;
     background: #050506;
+}
+
+.hospedes-table {
+    table-layout: fixed;
+    min-width: 920px;
+}
+
+.hospedes-table th:nth-child(1),
+.hospedes-table td:nth-child(1) {
+    width: 28%;
+}
+
+.hospedes-table th:nth-child(2),
+.hospedes-table td:nth-child(2) {
+    width: 16%;
+}
+
+.hospedes-table th:nth-child(3),
+.hospedes-table td:nth-child(3) {
+    width: 22%;
+}
+
+.hospedes-table th:nth-child(4),
+.hospedes-table td:nth-child(4) {
+    width: 18%;
+}
+
+.hospedes-table th:nth-child(5),
+.hospedes-table td:nth-child(5) {
+    width: 16%;
+}
+
+.hospedes-table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.hospedes-table td:nth-child(2),
+.hospedes-table td:nth-child(4) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-ellipsis,
+.hospedes-table .cell-title,
+.hospedes-table .cell-subtitle {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table-modern th,
