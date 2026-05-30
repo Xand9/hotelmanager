@@ -23,14 +23,14 @@
                     <span class="badge badge-EM_MANUTENCAO">Em manutenção</span>
                 </div>
             </div>
-            <a class="btn btn-primary-action" th:href="@{/quartos/cadastro}">Cadastrar novo quarto</a>
+            <a class="btn btn-primary-action btn-featured-action" th:href="@{/quartos/cadastro}">Cadastrar novo quarto</a>
         </div>
 
         <section class="data-card">
             <div class="section-title">
                 <div>
                     <h2>Quartos cadastrados</h2>
-                    <p>Esta tela é apenas para consulta e atualização de status. O cadastro de novos quartos fica em uma aba separada.</p>
+                    <p>Consulte a situação dos quartos e use o botão Cadastrar novo quarto para adicionar novas acomodações.</p>
                 </div>
             </div>
 
@@ -50,7 +50,7 @@
                     <tr th:if="${#lists.isEmpty(quartos)}">
                         <td colspan="6" class="empty">
                             <strong>Nenhum quarto cadastrado.</strong>
-                            Use a aba Cadastrar quarto para adicionar as acomodações do hotel.
+                            Use o botão Cadastrar novo quarto para adicionar as acomodações do hotel.
                         </td>
                     </tr>
                     <tr th:each="item : ${quartos}">
