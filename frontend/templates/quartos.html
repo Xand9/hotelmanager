@@ -57,7 +57,7 @@
                             Use o botão Cadastrar novo quarto para adicionar as acomodações do hotel.
                         </td>
                     </tr>
-                    <tr th:each="item : ${quartos}">
+                    <tr th:each="item : ${quartos}" th:with="reservaAtiva=${reservasAtivasPorQuarto[item.id]}">
                         <td>
                             <div class="cell-primary">
                                 <span class="cell-title" th:text="${'Quarto ' + item.numero}">Quarto 101</span>
@@ -67,13 +67,25 @@
                         <td th:text="${item.capacidade + ' pessoa(s)'}">2 pessoas</td>
                         <td class="cell-money" th:text="${#numbers.formatCurrency(item.valorDiaria)}">R$ 0,00</td>
                         <td>
-                            <span class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Disponível</span>
+                            <span th:if="${reservaAtiva == null}" class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Disponível</span>
+                            <span th:if="${reservaAtiva != null && reservaAtiva.status.name() == 'RESERVADA'}" class="badge badge-RESERVADA badge-reserved-room">Reservado</span>
+                            <span th:if="${reservaAtiva != null && reservaAtiva.status.name() == 'CHECKIN_REALIZADO'}" class="badge badge-OCUPADO badge-reserved-room">Ocupado</span>
                         </td>
                         <td>
                             <span class="muted-line" th:text="${item.observacoes == null || item.observacoes.isBlank() ? 'Sem observações' : item.observacoes}">Sem observações</span>
                         </td>
                         <td class="action-cell">
-                            <div class="row-actions">
+                            <div class="reservation-lock" th:if="${reservaAtiva != null}" th:classappend="${reservaAtiva.status.name() == 'CHECKIN_REALIZADO'} ? ' reservation-lock-occupied' : ''">
+                                <div class="reservation-lock-header">
+                                    <strong th:text="${reservaAtiva.status.name() == 'CHECKIN_REALIZADO'} ? 'Quarto ocupado' : 'Quarto reservado'">Quarto reservado</strong>
+                                    <span th:text="${#temporals.format(reservaAtiva.dataEntrada, 'dd/MM/yyyy') + ' a ' + #temporals.format(reservaAtiva.dataSaida, 'dd/MM/yyyy')}">30/05/2026 a 06/06/2026</span>
+                                </div>
+                                <span th:text="${'Hóspede: ' + reservaAtiva.hospede.nome}">Hóspede: Cliente</span>
+                                <span th:if="${reservaAtiva.status.name() == 'RESERVADA'}">Use a aba Reservas para check-in, cancelamento ou edição.</span>
+                                <span th:if="${reservaAtiva.status.name() == 'CHECKIN_REALIZADO'}">Use a aba Reservas para check-out e liberação do quarto.</span>
+                            </div>
+
+                            <div class="row-actions" th:if="${reservaAtiva == null}">
                                 <a class="btn btn-sm btn-edit" th:href="@{/quartos/{id}/editar(id=${item.id})}">Editar cadastro</a>
                                 <form th:action="@{/quartos/{id}/status/DISPONIVEL(id=${item.id})}" method="post">
                                     <button class="btn btn-sm btn-status-available" type="submit">Disponível</button>

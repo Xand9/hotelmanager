@@ -54,11 +54,10 @@
                         <option value="">Selecione o quarto</option>
                         <option th:each="quarto : ${quartos}"
                                 th:value="${quarto.id}"
-                                th:disabled="${quarto.status.name() != 'DISPONIVEL'}"
                                 th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.tipo.descricao + ' - ' + quarto.status.descricao}">
                         </option>
                     </select>
-                    <small>Somente quartos com status Disponível podem ser selecionados para nova reserva.</small>
+                    <small>O sistema permite reservas futuras para o mesmo quarto quando os períodos não se sobrepõem.</small>
                 </div>
 
                 <div class="field">

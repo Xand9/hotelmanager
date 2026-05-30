@@ -1,13 +1,17 @@
 package com.hotelmanager.service;
 
 import com.hotelmanager.dto.ReservaRequestDTO;
+import com.hotelmanager.enums.StatusChamado;
 import com.hotelmanager.enums.StatusQuarto;
 import com.hotelmanager.enums.StatusReserva;
+import com.hotelmanager.enums.TipoChamado;
 import com.hotelmanager.exception.RecursoNaoEncontradoException;
 import com.hotelmanager.exception.RegraDeNegocioException;
+import com.hotelmanager.model.ChamadoInterno;
 import com.hotelmanager.model.Hospede;
 import com.hotelmanager.model.Quarto;
 import com.hotelmanager.model.Reserva;
+import com.hotelmanager.repository.ChamadoInternoRepository;
 import com.hotelmanager.repository.HospedeRepository;
 import com.hotelmanager.repository.QuartoRepository;
 import com.hotelmanager.repository.ReservaRepository;
@@ -23,18 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ReservaService {
 
+    private static final List<StatusReserva> STATUS_QUE_BLOQUEIAM_RESERVA = List.of(
+            StatusReserva.RESERVADA,
+            StatusReserva.CHECKIN_REALIZADO
+    );
+
     private final ReservaRepository reservaRepository;
     private final HospedeRepository hospedeRepository;
     private final QuartoRepository quartoRepository;
+    private final ChamadoInternoRepository chamadoInternoRepository;
 
     public ReservaService(
             ReservaRepository reservaRepository,
             HospedeRepository hospedeRepository,
-            QuartoRepository quartoRepository
+            QuartoRepository quartoRepository,
+            ChamadoInternoRepository chamadoInternoRepository
     ) {
         this.reservaRepository = reservaRepository;
         this.hospedeRepository = hospedeRepository;
         this.quartoRepository = quartoRepository;
+        this.chamadoInternoRepository = chamadoInternoRepository;
     }
 
     public List<Reserva> listarTodas() {
@@ -103,6 +115,8 @@ public class ReservaService {
         }
 
         Quarto quarto = reserva.getQuarto();
+        validarChamadoBloqueante(quarto);
+
         if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
             throw new RegraDeNegocioException("Nao e possivel fazer check-in em quarto em manutencao.");
         }
@@ -157,15 +171,30 @@ public class ReservaService {
             throw new RegraDeNegocioException("A data de saida deve ser posterior a data de entrada.");
         }
 
-        if (quarto.getStatus() == StatusQuarto.OCUPADO
-                || quarto.getStatus() == StatusQuarto.EM_LIMPEZA
-                || quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
-            throw new RegraDeNegocioException("O quarto nao esta disponivel para reserva.");
-        }
+        validarChamadoBloqueante(quarto);
 
         if (existeConflitoDeDatas(quarto.getId(), dataEntrada, dataSaida, reservaIgnoradaId)) {
             throw new RegraDeNegocioException("Ja existe reserva ativa para este quarto no periodo informado.");
         }
+    }
+
+    private void validarChamadoBloqueante(Quarto quarto) {
+        List<ChamadoInterno> chamadosBloqueantes = chamadoInternoRepository.findByQuartoIdAndStatusInAndTipoIn(
+                quarto.getId(),
+                List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
+                List.of(TipoChamado.LIMPEZA, TipoChamado.MANUTENCAO)
+        );
+
+        if (chamadosBloqueantes.isEmpty()) {
+            return;
+        }
+
+        ChamadoInterno chamado = chamadosBloqueantes.get(0);
+        throw new RegraDeNegocioException(
+                "Nao e possivel reservar este quarto porque existe um chamado ativo de "
+                        + chamado.getTipo().getDescricao()
+                        + ". Conclua ou exclua o chamado antes de criar ou alterar a reserva."
+        );
     }
 
     private boolean existeConflitoDeDatas(
@@ -174,11 +203,13 @@ public class ReservaService {
             LocalDate dataSaida,
             Long reservaIgnoradaId
     ) {
-        return reservaRepository.findByQuartoIdAndStatus(quartoId, StatusReserva.RESERVADA)
-                .stream()
-                .filter(reserva -> reservaIgnoradaId == null || !reserva.getId().equals(reservaIgnoradaId))
-                .anyMatch(reserva -> dataEntrada.isBefore(reserva.getDataSaida())
-                        && dataSaida.isAfter(reserva.getDataEntrada()));
+        return !reservaRepository.buscarReservasConflitantes(
+                quartoId,
+                STATUS_QUE_BLOQUEIAM_RESERVA,
+                dataEntrada,
+                dataSaida,
+                reservaIgnoradaId
+        ).isEmpty();
     }
 
     private Integer calcularQuantidadeDiarias(LocalDate dataEntrada, LocalDate dataSaida) {

@@ -30,6 +30,7 @@ public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devo
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("quartos", quartoService.listarTodos());
+        model.addAttribute("reservasAtivasPorQuarto", quartoService.buscarReservasAtivasPorQuarto());
         return "quartos";
     }
 

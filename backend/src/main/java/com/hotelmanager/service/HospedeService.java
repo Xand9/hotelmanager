@@ -1,8 +1,12 @@
 package com.hotelmanager.service;
 
+import com.hotelmanager.enums.StatusReserva;
 import com.hotelmanager.exception.RecursoNaoEncontradoException;
+import com.hotelmanager.exception.RegraDeNegocioException;
 import com.hotelmanager.model.Hospede;
+import com.hotelmanager.model.Reserva;
 import com.hotelmanager.repository.HospedeRepository;
+import com.hotelmanager.repository.ReservaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -13,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class HospedeService {
 
     private final HospedeRepository hospedeRepository;
+    private final ReservaRepository reservaRepository;
 
-    public HospedeService(HospedeRepository hospedeRepository) {
+    public HospedeService(HospedeRepository hospedeRepository, ReservaRepository reservaRepository) {
         this.hospedeRepository = hospedeRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     public List<Hospede> listarTodos() {
@@ -48,7 +54,27 @@ public class HospedeService {
 
     public void inativar(Long id) {
         Hospede hospede = buscarPorId(id);
+        validarReservaAtiva(hospede);
+
         hospede.setAtivo(false);
         hospedeRepository.save(hospede);
+    }
+
+    private void validarReservaAtiva(Hospede hospede) {
+        List<Reserva> reservasAtivas = reservaRepository.findByHospedeIdAndStatusIn(
+                hospede.getId(),
+                List.of(StatusReserva.RESERVADA, StatusReserva.CHECKIN_REALIZADO)
+        );
+
+        if (reservasAtivas.isEmpty()) {
+            return;
+        }
+
+        Reserva reserva = reservasAtivas.get(0);
+        throw new RegraDeNegocioException(
+                "Nao e possivel excluir este hospede porque ele possui uma reserva ativa no quarto "
+                        + reserva.getQuarto().getNumero()
+                        + ". Cancele a reserva ou finalize o check-out antes de excluir o hospede."
+        );
     }
 }

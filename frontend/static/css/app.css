@@ -768,6 +768,55 @@ textarea {
     min-width: 260px;
 }
 
+.reservation-lock span {
+    color: #eef1f6;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.badge-reserved-room {
+    width: fit-content;
+    max-width: max-content;
+}
+
+.reservation-lock {
+    display: grid;
+    gap: 5px;
+    min-width: 360px;
+    border: 1px solid #cfe2ff;
+    border-radius: var(--radius-sm);
+    background: var(--color-info-bg);
+    color: #0758c7;
+    padding: 12px;
+}
+
+.reservation-lock-occupied {
+    background: #eaf3ff;
+    border-color: #bdd8ff;
+}
+
+.reservation-lock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.reservation-lock-header strong {
+    color: #0758c7;
+    font-size: 14px;
+}
+
+.reservation-lock-header span {
+    color: #3b2cc3;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.reservation-lock span {
+    color: #174f9f;
+}
+
 .badge {
     display: inline-flex;
     align-items: center;

@@ -19,6 +19,10 @@
             </div>
         </div>
 
+        <div class="alert alert-warning" th:if="${mensagemAviso}" th:text="${mensagemAviso}">
+            NÃ£o Ã© possÃ­vel excluir este hÃ³spede porque ele possui reserva ativa.
+        </div>
+
         <section class="grid module-layout hospedes-layout">
             <form class="form-card form-grid" th:action="@{/hospedes/salvar}" th:object="${hospede}" method="post">
                 <div class="section-title">
