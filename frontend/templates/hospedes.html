@@ -8,20 +8,7 @@
 </head>
 <body>
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="brand">
-            <img th:src="@{/img/izzy-logo.svg}" alt="Izzy Hotel">
-            <small>Conforto para Profissionais em Movimento</small>
-        </div>
-        <nav class="nav">
-            <a th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/quartos}">Quartos</a>
-            <a th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
-            <a class="active" th:href="@{/hospedes}">Hóspedes</a>
-            <a th:href="@{/reservas}">Reservas</a>
-            <a th:href="@{/chamados}">Chamados</a>
-        </nav>
-    </aside>
+    <div th:replace="~{fragments/sidebar :: sidebar('hospedes')}"></div>
 
     <main class="content content-wide">
         <div class="page-header">

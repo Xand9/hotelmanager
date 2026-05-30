@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside class="sidebar" th:fragment="sidebar(activePage)">
+    <div class="brand">
+        <img th:src="@{/img/logo.png}" alt="Izzy Hotel">
+    </div>
+    <nav class="nav">
+        <a th:classappend="${activePage == 'dashboard'} ? 'active' : ''" th:href="@{/dashboard}">Dashboard</a>
+        <a th:classappend="${activePage == 'quartos'} ? 'active' : ''" th:href="@{/quartos}">Quartos</a>
+        <a th:classappend="${activePage == 'cadastro-quarto'} ? 'active' : ''" th:href="@{/quartos/cadastro}">Cadastrar quarto</a>
+        <a th:classappend="${activePage == 'hospedes'} ? 'active' : ''" th:href="@{/hospedes}">Hóspedes</a>
+        <a th:classappend="${activePage == 'reservas'} ? 'active' : ''" th:href="@{/reservas}">Reservas</a>
+        <a th:classappend="${activePage == 'chamados'} ? 'active' : ''" th:href="@{/chamados}">Chamados</a>
+    </nav>
+</aside>
+</body>
+</html>
