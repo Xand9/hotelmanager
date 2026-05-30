@@ -722,8 +722,8 @@ textarea {
     display: inline-flex;
     align-items: center;
     border-radius: 999px;
-    padding: 6px 11px;
-    font-size: 12px;
+    padding: 8px 13px;
+    font-size: 13px;
     font-weight: 950;
     white-space: nowrap;
     border: 1px solid transparent;
@@ -731,9 +731,9 @@ textarea {
 
 .badge::before {
     content: "";
-    width: 7px;
-    height: 7px;
-    margin-right: 7px;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
     border-radius: 999px;
     background: currentColor;
 }
@@ -796,15 +796,17 @@ textarea {
 .status-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 14px 0 0;
+    gap: 10px;
+    margin: 16px 0 0;
 }
 
 .status-legend .badge {
-    font-size: 11px;
+    min-height: 34px;
+    padding: 9px 15px;
+    font-size: 13px;
     background: #050506;
     border-color: #050506;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.26);
 }
 
 .quick-summary {
