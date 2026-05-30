@@ -13,9 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
     //Regra aplicada a banco.
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
     //Lombok reduz código repetitivo.
 import lombok.AllArgsConstructor;
@@ -38,6 +40,7 @@ public class Quarto {
     private Long id;
 
     @NotBlank(message = "O numero do quarto e obrigatorio.")
+    @Size(max = 20, message = "O numero do quarto deve ter no maximo 20 caracteres.")
     private String numero;
 
     @NotNull(message = "O tipo do quarto e obrigatorio.")
@@ -48,6 +51,7 @@ public class Quarto {
 
     @NotNull(message = "A capacidade do quarto e obrigatoria.")
     @Min(value = 1, message = "A capacidade deve ser maior que zero.")
+    @Max(value = 99, message = "A capacidade deve ter no maximo 99 pessoas.")
     private Integer capacidade;
 
     @NotNull(message = "O valor da diaria e obrigatorio.")
@@ -59,6 +63,7 @@ public class Quarto {
     @Column(length = 40)
     private StatusQuarto status;
 
+    @Size(max = 210, message = "As observacoes devem ter no maximo 210 caracteres.")
     private String observacoes;
 
     private Boolean ativo;

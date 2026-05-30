@@ -34,7 +34,8 @@
 
                 <div class="field">
                     <label>Número do quarto</label>
-                    <input th:field="*{numero}" th:errorclass="input-error" placeholder="Ex: 203">
+                    <input th:field="*{numero}" maxlength="20" th:errorclass="input-error" placeholder="Ex: 203">
+                    <small>Limite de 20 caracteres.</small>
                     <span class="field-error" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}">Informe o numero do quarto.</span>
                 </div>
 
@@ -49,7 +50,8 @@
 
                 <div class="field">
                     <label>Capacidade</label>
-                    <input type="number" min="1" th:field="*{capacidade}" th:errorclass="input-error" placeholder="Ex: 2">
+                    <input type="number" min="1" max="99" data-max-number="99" th:field="*{capacidade}" th:errorclass="input-error" placeholder="Ex: 2">
+                    <small>Informe de 1 a 99 pessoas.</small>
                     <span class="field-error" th:if="${#fields.hasErrors('capacidade')}" th:errors="*{capacidade}">Informe a capacidade.</span>
                 </div>
 
@@ -69,7 +71,9 @@
 
                 <div class="field">
                     <label>Observações</label>
-                    <textarea th:field="*{observacoes}" placeholder="Ex: quarto próximo à recepção, cama casal, mesa de trabalho, manutenção recorrente ou detalhes importantes."></textarea>
+                    <textarea th:field="*{observacoes}" maxlength="210" placeholder="Ex: quarto próximo à recepção, cama casal, mesa de trabalho, manutenção recorrente ou detalhes importantes."></textarea>
+                    <small>Limite de 210 caracteres.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('observacoes')}" th:errors="*{observacoes}">Erro</span>
                 </div>
 
                 <div class="form-actions">

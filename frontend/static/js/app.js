@@ -57,3 +57,13 @@ document.querySelectorAll("[data-mask='telefone']").forEach((input) => {
         input.value = formatTelefone(input.value);
     });
 });
+
+document.querySelectorAll("[data-max-number]").forEach((input) => {
+    const maxValue = Number(input.dataset.maxNumber);
+
+    input.addEventListener("input", () => {
+        if (input.value !== "" && Number(input.value) > maxValue) {
+            input.value = String(maxValue);
+        }
+    });
+});
