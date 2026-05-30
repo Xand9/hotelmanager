@@ -11,6 +11,10 @@ public interface QuartoRepository extends JpaRepository<Quarto, Long> {
 
     List<Quarto> findByAtivoTrueAndStatus(StatusQuarto status);
 
+    boolean existsByNumeroAndAtivoTrue(String numero);
+
+    boolean existsByNumeroAndAtivoTrueAndIdNot(String numero, Long id);
+
     long countByAtivoTrue();
 
     long countByAtivoTrueAndStatus(StatusQuarto status);

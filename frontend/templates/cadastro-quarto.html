@@ -30,6 +30,9 @@
                 <div class="alert alert-danger" th:if="${#fields.hasErrors()}">
                     Existem campos obrigatorios sem preencher. Confira as mensagens abaixo antes de salvar.
                 </div>
+                <div class="alert alert-warning" th:if="${mensagemAviso}" th:text="${mensagemAviso}">
+                    Ja existe um quarto ativo cadastrado com este numero.
+                </div>
                 <input type="hidden" th:field="*{id}">
 
                 <div class="field">

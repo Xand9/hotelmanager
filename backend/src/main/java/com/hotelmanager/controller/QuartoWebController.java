@@ -78,8 +78,9 @@ public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devo
                 quartoService.atualizar(quarto.getId(), quarto);
             }
         } catch (RegraDeNegocioException exception) {
-            redirectAttributes.addFlashAttribute("mensagemAviso", exception.getMessage());
-            return "redirect:/quartos";
+            model.addAttribute("mensagemAviso", exception.getMessage());
+            prepararFormulario(model, quarto);
+            return "cadastro-quarto";
         }
 
         return "redirect:/quartos";

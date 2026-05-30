@@ -89,6 +89,9 @@ public class QuartoService {
     }
 
     public Quarto cadastrar(Quarto quarto) {
+        normalizarNumero(quarto);
+        validarNumeroDuplicadoNoCadastro(quarto);
+
         if (quarto.getStatus() == null) {
             quarto.setStatus(StatusQuarto.DISPONIVEL);
         }
@@ -101,6 +104,8 @@ public class QuartoService {
         Quarto quarto = buscarPorId(id);
         validarChamadoAtivo(quarto);
         validarReservaAtiva(quarto);
+        normalizarNumero(quartoAtualizado);
+        validarNumeroDuplicadoNaAtualizacao(id, quartoAtualizado);
 
         quarto.setNumero(quartoAtualizado.getNumero());
         quarto.setTipo(quartoAtualizado.getTipo());
@@ -127,6 +132,32 @@ public class QuartoService {
         Quarto quarto = buscarPorId(id);
         quarto.setAtivo(false);
         quartoRepository.save(quarto);
+    }
+
+    private void normalizarNumero(Quarto quarto) {
+        if (quarto.getNumero() != null) {
+            quarto.setNumero(quarto.getNumero().trim());
+        }
+    }
+
+    private void validarNumeroDuplicadoNoCadastro(Quarto quarto) {
+        if (quarto.getNumero() == null || quarto.getNumero().isBlank()) {
+            return;
+        }
+
+        if (quartoRepository.existsByNumeroAndAtivoTrue(quarto.getNumero())) {
+            throw new RegraDeNegocioException("Ja existe um quarto ativo cadastrado com este numero.");
+        }
+    }
+
+    private void validarNumeroDuplicadoNaAtualizacao(Long id, Quarto quarto) {
+        if (quarto.getNumero() == null || quarto.getNumero().isBlank()) {
+            return;
+        }
+
+        if (quartoRepository.existsByNumeroAndAtivoTrueAndIdNot(quarto.getNumero(), id)) {
+            throw new RegraDeNegocioException("Ja existe outro quarto ativo cadastrado com este numero.");
+        }
     }
 
     private void validarChamadoAtivo(Quarto quarto) {
