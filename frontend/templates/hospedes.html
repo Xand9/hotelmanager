@@ -36,13 +36,13 @@
 
                 <div class="field">
                     <label>CPF ou documento</label>
-                    <input th:field="*{documento}" maxlength="20" placeholder="Ex: 123.456.789-00">
+                    <input th:field="*{documento}" maxlength="14" inputmode="numeric" data-mask="cpf" placeholder="Ex: 123.456.789-00">
                     <span class="field-error" th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}">Erro</span>
                 </div>
 
                 <div class="field">
                     <label>Telefone</label>
-                    <input th:field="*{telefone}" maxlength="15" placeholder="Ex: (34) 99999-9999">
+                    <input th:field="*{telefone}" maxlength="15" inputmode="numeric" data-mask="telefone" placeholder="Ex: (34) 99999-9999">
                     <span class="field-error" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}">Erro</span>
                 </div>
 

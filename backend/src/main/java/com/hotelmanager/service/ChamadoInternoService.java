@@ -3,6 +3,7 @@ package com.hotelmanager.service;
 import com.hotelmanager.dto.ChamadoInternoFormDTO;
 import com.hotelmanager.enums.StatusChamado;
 import com.hotelmanager.enums.StatusQuarto;
+import com.hotelmanager.enums.TipoChamado;
 import com.hotelmanager.exception.RecursoNaoEncontradoException;
 import com.hotelmanager.model.ChamadoInterno;
 import com.hotelmanager.model.Quarto;
@@ -42,6 +43,8 @@ public class ChamadoInternoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Quarto nao encontrado."));
 
         ChamadoInterno chamado = dto.id() == null ? new ChamadoInterno() : buscarPorId(dto.id());
+        Quarto quartoAnterior = chamado.getQuarto();
+
         chamado.setQuarto(quarto);
         chamado.setTipo(dto.tipo());
         chamado.setDescricao(dto.descricao());
@@ -54,7 +57,14 @@ public class ChamadoInternoService {
         atualizarConclusao(chamado);
         atualizarStatusDoQuarto(chamado);
 
-        return chamadoInternoRepository.save(chamado);
+        ChamadoInterno chamadoSalvo = chamadoInternoRepository.save(chamado);
+        recalcularStatusDoQuarto(quarto);
+
+        if (quartoAnterior != null && !quartoAnterior.getId().equals(quarto.getId())) {
+            recalcularStatusDoQuarto(quartoAnterior);
+        }
+
+        return chamadoSalvo;
     }
 
     public ChamadoInterno alterarStatus(Long id, StatusChamado status) {
@@ -62,11 +72,22 @@ public class ChamadoInternoService {
         chamado.setStatus(status);
         atualizarConclusao(chamado);
         atualizarStatusDoQuarto(chamado);
-        return chamadoInternoRepository.save(chamado);
+        ChamadoInterno chamadoSalvo = chamadoInternoRepository.save(chamado);
+
+        if (status == StatusChamado.CONCLUIDO || status == StatusChamado.CANCELADO) {
+            recalcularStatusDoQuarto(chamado.getQuarto());
+        }
+
+        return chamadoSalvo;
     }
 
     public void excluir(Long id) {
-        chamadoInternoRepository.delete(buscarPorId(id));
+        ChamadoInterno chamado = buscarPorId(id);
+        Quarto quarto = chamado.getQuarto();
+
+        chamadoInternoRepository.delete(chamado);
+        chamadoInternoRepository.flush();
+        recalcularStatusDoQuarto(quarto);
     }
 
     public ChamadoInternoFormDTO criarFormulario() {
@@ -106,5 +127,36 @@ public class ChamadoInternoService {
             }
         }
         quartoRepository.save(quarto);
+    }
+
+    private void recalcularStatusDoQuarto(Quarto quarto) {
+        List<ChamadoInterno> chamadosAtivos = chamadoInternoRepository.findByQuartoIdAndStatusInAndTipoIn(
+                quarto.getId(),
+                List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
+                List.of(TipoChamado.LIMPEZA, TipoChamado.MANUTENCAO)
+        );
+
+        boolean possuiManutencaoAtiva = chamadosAtivos.stream()
+                .anyMatch(chamado -> chamado.getTipo() == TipoChamado.MANUTENCAO);
+
+        if (possuiManutencaoAtiva) {
+            quarto.setStatus(StatusQuarto.EM_MANUTENCAO);
+            quartoRepository.save(quarto);
+            return;
+        }
+
+        boolean possuiLimpezaAtiva = chamadosAtivos.stream()
+                .anyMatch(chamado -> chamado.getTipo() == TipoChamado.LIMPEZA);
+
+        if (possuiLimpezaAtiva) {
+            quarto.setStatus(StatusQuarto.EM_LIMPEZA);
+            quartoRepository.save(quarto);
+            return;
+        }
+
+        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO || quarto.getStatus() == StatusQuarto.EM_LIMPEZA) {
+            quarto.setStatus(StatusQuarto.DISPONIVEL);
+            quartoRepository.save(quarto);
+        }
     }
 }

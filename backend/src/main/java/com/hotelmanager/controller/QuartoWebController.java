@@ -33,7 +33,9 @@ public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devo
 
     @GetMapping("/cadastro")
     public String cadastro(Model model) {
-        prepararFormulario(model, new Quarto());
+        Quarto quarto = new Quarto();
+        quarto.setStatus(StatusQuarto.DISPONIVEL);
+        prepararFormulario(model, quarto);
         return "cadastro-quarto";
     }
 

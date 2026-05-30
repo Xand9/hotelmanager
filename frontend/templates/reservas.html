@@ -73,7 +73,9 @@
 
                 <div class="field">
                     <label>Observações</label>
-                    <textarea th:field="*{observacoes}" placeholder="Ex: hóspede chegará após 20h, empresa conveniada ou preferência de andar."></textarea>
+                    <textarea th:field="*{observacoes}" maxlength="210" placeholder="Ex: hóspede chegará após 20h, empresa conveniada ou preferência de andar."></textarea>
+                    <small>Limite de 210 caracteres.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('observacoes')}" th:errors="*{observacoes}">Erro</span>
                 </div>
 
                 <div class="form-actions">
@@ -91,7 +93,7 @@
                 </div>
 
                 <div class="table-wrap">
-                    <table class="table-modern">
+                    <table class="table-modern reservas-table">
                         <thead>
                         <tr>
                             <th>Hóspede</th>
@@ -99,12 +101,13 @@
                             <th>Período</th>
                             <th>Status</th>
                             <th>Valor</th>
+                            <th>Observações</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:if="${#lists.isEmpty(reservas)}">
-                            <td colspan="6" class="empty">
+                            <td colspan="7" class="empty">
                                 <strong>Nenhuma reserva cadastrada.</strong>
                                 Crie uma reserva para iniciar o controle de hospedagens.
                             </td>
@@ -132,6 +135,9 @@
                                 <span class="badge" th:classappend="'badge-' + ${item.status.name()}" th:text="${item.status.descricao}">Reservada</span>
                             </td>
                             <td class="cell-money" th:text="${#numbers.formatCurrency(item.valorTotal)}">R$ 0,00</td>
+                            <td class="observation-cell">
+                                <span class="muted-line" th:text="${item.observacoes == null || item.observacoes.isBlank() ? 'Sem observações' : item.observacoes}">Sem observações</span>
+                            </td>
                             <td class="action-cell">
                                 <div class="row-actions">
                                     <a class="btn btn-sm btn-edit" th:if="${item.status.name() == 'RESERVADA'}" th:href="@{/reservas/{id}/editar(id=${item.id})}">Editar</a>

@@ -1,6 +1,7 @@
 package com.hotelmanager.dto;//dados vindos da tela/formulário.
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record ReservaFormDTO(
@@ -18,6 +19,7 @@ public record ReservaFormDTO(
         @NotNull(message = "A data de saida e obrigatoria.")
         LocalDate dataSaida,
 
+        @Size(max = 210, message = "As observacoes devem ter no maximo 210 caracteres.")
         String observacoes
 ) {
 }

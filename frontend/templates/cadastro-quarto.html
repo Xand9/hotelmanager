@@ -62,7 +62,6 @@
                 <div class="field">
                     <label>Status inicial</label>
                     <select th:field="*{status}">
-                        <option value="">Disponível por padrão</option>
                         <option th:each="status : ${statusQuartos}" th:value="${status}" th:text="${status.descricao}"></option>
                     </select>
                     <small>Depois do cadastro, o status também pode ser alterado rapidamente na aba Quartos.</small>
