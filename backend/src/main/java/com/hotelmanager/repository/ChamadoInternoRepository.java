@@ -14,6 +14,11 @@ public interface ChamadoInternoRepository extends JpaRepository<ChamadoInterno, 
 
     List<ChamadoInterno> findByDataAberturaBetween(LocalDateTime inicio, LocalDateTime fim);
 
+    List<ChamadoInterno> findByStatusInAndTipoIn(
+            Collection<StatusChamado> status,
+            Collection<TipoChamado> tipos
+    );
+
     List<ChamadoInterno> findByQuartoIdAndStatusInAndTipoIn(
             Long quartoId,
             Collection<StatusChamado> status,

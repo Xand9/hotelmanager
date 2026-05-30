@@ -3,12 +3,14 @@ package com.hotelmanager.service;
 import com.hotelmanager.dto.ChamadoInternoFormDTO;
 import com.hotelmanager.enums.StatusChamado;
 import com.hotelmanager.enums.StatusQuarto;
+import com.hotelmanager.enums.StatusReserva;
 import com.hotelmanager.enums.TipoChamado;
 import com.hotelmanager.exception.RecursoNaoEncontradoException;
 import com.hotelmanager.model.ChamadoInterno;
 import com.hotelmanager.model.Quarto;
 import com.hotelmanager.repository.ChamadoInternoRepository;
 import com.hotelmanager.repository.QuartoRepository;
+import com.hotelmanager.repository.ReservaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -20,13 +22,16 @@ public class ChamadoInternoService {
 
     private final ChamadoInternoRepository chamadoInternoRepository;//salvar, buscar, listar e excluir chamados
     private final QuartoRepository quartoRepository;//buscar o quarto relacionado e alterar o status dele.
+    private final ReservaRepository reservaRepository;
 
     public ChamadoInternoService(//injeção de dependência
             ChamadoInternoRepository chamadoInternoRepository,
-            QuartoRepository quartoRepository
+            QuartoRepository quartoRepository,
+            ReservaRepository reservaRepository
     ) {
         this.chamadoInternoRepository = chamadoInternoRepository;
         this.quartoRepository = quartoRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     public List<ChamadoInterno> listarTodos() {
@@ -120,6 +125,12 @@ public class ChamadoInternoService {
         }
 
         Quarto quarto = chamado.getQuarto();
+        if (possuiCheckinRealizado(quarto)) {
+            quarto.setStatus(StatusQuarto.OCUPADO);
+            quartoRepository.save(quarto);
+            return;
+        }
+
         switch (chamado.getTipo()) {
             case LIMPEZA -> quarto.setStatus(StatusQuarto.EM_LIMPEZA);
             case MANUTENCAO -> quarto.setStatus(StatusQuarto.EM_MANUTENCAO);
@@ -130,6 +141,12 @@ public class ChamadoInternoService {
     }
 
     private void recalcularStatusDoQuarto(Quarto quarto) {
+        if (possuiCheckinRealizado(quarto)) {
+            quarto.setStatus(StatusQuarto.OCUPADO);
+            quartoRepository.save(quarto);
+            return;
+        }
+
         List<ChamadoInterno> chamadosAtivos = chamadoInternoRepository.findByQuartoIdAndStatusInAndTipoIn(
                 quarto.getId(),
                 List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
@@ -158,5 +175,9 @@ public class ChamadoInternoService {
             quarto.setStatus(StatusQuarto.DISPONIVEL);
             quartoRepository.save(quarto);
         }
+    }
+
+    private boolean possuiCheckinRealizado(Quarto quarto) {
+        return !reservaRepository.findByQuartoIdAndStatus(quarto.getId(), StatusReserva.CHECKIN_REALIZADO).isEmpty();
     }
 }

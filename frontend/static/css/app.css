@@ -350,6 +350,13 @@ h2 {
     margin-bottom: 18px;
 }
 
+.alert-success {
+    background: var(--color-success-bg);
+    border: 1px solid #c8ecd7;
+    color: var(--color-success);
+    margin-bottom: 18px;
+}
+
 input,
 select,
 textarea {
@@ -766,6 +773,90 @@ textarea {
 
 .action-cell {
     min-width: 260px;
+}
+
+.status-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.daily-cleaning-form {
+    margin: 0;
+}
+
+.daily-cleaning-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    max-width: max-content;
+    min-height: 34px;
+    border-radius: 999px;
+    padding: 8px 13px;
+    border: 1px solid transparent;
+    font-size: 12.5px;
+    font-weight: 950;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.daily-cleaning-pending {
+    background: #fff4cf;
+    border-color: #f4d77d;
+    color: #8a5a00;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+}
+
+.daily-cleaning-pending .hover-label {
+    display: none;
+}
+
+.daily-cleaning-pending:hover {
+    background: var(--color-success-bg);
+    border-color: #c8ecd7;
+    color: var(--color-success);
+    transform: translateY(-1px);
+}
+
+.daily-cleaning-pending:hover .default-label {
+    display: none;
+}
+
+.daily-cleaning-pending:hover .hover-label {
+    display: inline;
+}
+
+.daily-cleaning-done {
+    background: var(--color-success-bg);
+    border-color: #c8ecd7;
+    color: var(--color-success);
+}
+
+.badge-call {
+    width: fit-content;
+    max-width: max-content;
+    font-size: 12.5px;
+}
+
+.badge-call-LIMPEZA {
+    color: #8a5a00;
+    background: #fff4cf;
+    border-color: #f4d77d;
+}
+
+.badge-call-MANUTENCAO {
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border-color: #ffc2ca;
+}
+
+.badge-call-SOLICITACAO_DO_HOSPEDE {
+    color: #394150;
+    background: #eef0f4;
+    border-color: #d8dde5;
 }
 
 .reservation-lock span {

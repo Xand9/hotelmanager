@@ -117,8 +117,8 @@ public class ReservaService {
         Quarto quarto = reserva.getQuarto();
         validarChamadoBloqueante(quarto);
 
-        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
-            throw new RegraDeNegocioException("Nao e possivel fazer check-in em quarto em manutencao.");
+        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO || quarto.getStatus() == StatusQuarto.EM_LIMPEZA) {
+            throw new RegraDeNegocioException("Nao e possivel fazer check-in em quarto em limpeza ou manutencao.");
         }
 
         reserva.setStatus(StatusReserva.CHECKIN_REALIZADO);
@@ -172,6 +172,10 @@ public class ReservaService {
         }
 
         validarChamadoBloqueante(quarto);
+
+        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
+            throw new RegraDeNegocioException("Nao e possivel reservar quarto em manutencao.");
+        }
 
         if (existeConflitoDeDatas(quarto.getId(), dataEntrada, dataSaida, reservaIgnoradaId)) {
             throw new RegraDeNegocioException("Ja existe reserva ativa para este quarto no periodo informado.");

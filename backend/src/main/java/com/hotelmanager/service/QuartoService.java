@@ -57,6 +57,25 @@ public class QuartoService {
         return reservasPorQuarto;
     }
 
+    public Map<Long, ChamadoInterno> buscarChamadosAtivosPorQuarto() {
+        Map<Long, ChamadoInterno> chamadosPorQuarto = new LinkedHashMap<>();
+
+        chamadoInternoRepository.findByStatusInAndTipoIn(
+                        List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
+                        List.of(TipoChamado.MANUTENCAO, TipoChamado.LIMPEZA, TipoChamado.SOLICITACAO_DO_HOSPEDE)
+                )
+                .forEach(chamado -> {
+                    Long quartoId = chamado.getQuarto().getId();
+                    ChamadoInterno chamadoAtual = chamadosPorQuarto.get(quartoId);
+
+                    if (chamadoAtual == null || prioridadeChamado(chamado) > prioridadeChamado(chamadoAtual)) {
+                        chamadosPorQuarto.put(quartoId, chamado);
+                    }
+                });
+
+        return chamadosPorQuarto;
+    }
+
     public Quarto buscarPorId(Long id) {
         return quartoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Quarto nao encontrado."));
@@ -99,7 +118,7 @@ public class QuartoService {
     public Quarto alterarStatus(Long id, StatusQuarto status) {
         Quarto quarto = buscarPorId(id);
         validarChamadoAtivo(quarto);
-        validarReservaAtiva(quarto);
+        validarAlteracaoStatusComReserva(quarto, status);
         quarto.setStatus(status);
         return quartoRepository.save(quarto);
     }
@@ -130,17 +149,12 @@ public class QuartoService {
     }
 
     private void validarReservaAtiva(Quarto quarto) {
-        List<Reserva> reservasAtivas = reservaRepository.findByQuartoIdAndStatus(quarto.getId(), StatusReserva.CHECKIN_REALIZADO);
+        Reserva reserva = buscarReservaAtiva(quarto);
 
-        if (reservasAtivas.isEmpty()) {
-            reservasAtivas = reservaRepository.findByQuartoIdAndStatus(quarto.getId(), StatusReserva.RESERVADA);
-        }
-
-        if (reservasAtivas.isEmpty()) {
+        if (reserva == null) {
             return;
         }
 
-        Reserva reserva = reservasAtivas.get(0);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         boolean quartoOcupado = reserva.getStatus() == StatusReserva.CHECKIN_REALIZADO;
 
@@ -155,5 +169,51 @@ public class QuartoService {
                         ? ". Use a aba Reservas para fazer check-out e liberar o quarto."
                         : ". Use a aba Reservas para fazer check-in, cancelar ou editar a reserva.")
         );
+    }
+
+    private void validarAlteracaoStatusComReserva(Quarto quarto, StatusQuarto novoStatus) {
+        Reserva reserva = buscarReservaAtiva(quarto);
+
+        if (reserva == null) {
+            return;
+        }
+
+        if (reserva.getStatus() == StatusReserva.CHECKIN_REALIZADO) {
+            throw new RegraDeNegocioException(
+                    "Este quarto esta ocupado por uma reserva com check-in realizado. Use a aba Reservas para fazer check-out."
+            );
+        }
+
+        if (reserva.getStatus() == StatusReserva.RESERVADA
+                && (novoStatus == StatusQuarto.DISPONIVEL || novoStatus == StatusQuarto.EM_LIMPEZA)) {
+            return;
+        }
+
+        throw new RegraDeNegocioException(
+                "Este quarto possui reserva futura ativa. Para evitar conflito operacional, use apenas Disponivel ou Limpeza antes do check-in."
+        );
+    }
+
+    private Reserva buscarReservaAtiva(Quarto quarto) {
+        List<Reserva> reservasAtivas = reservaRepository.findByQuartoIdAndStatus(quarto.getId(), StatusReserva.CHECKIN_REALIZADO);
+
+        if (reservasAtivas.isEmpty()) {
+            reservasAtivas = reservaRepository.findByQuartoIdAndStatus(quarto.getId(), StatusReserva.RESERVADA);
+        }
+
+        if (reservasAtivas.isEmpty()) {
+            return null;
+        }
+
+        return reservasAtivas.get(0);
+    }
+
+    private int prioridadeChamado(ChamadoInterno chamado) {
+        return switch (chamado.getTipo()) {
+            case MANUTENCAO -> 3;
+            case LIMPEZA -> 2;
+            case SOLICITACAO_DO_HOSPEDE -> 1;
+            case OUTRO -> 0;
+        };
     }
 }

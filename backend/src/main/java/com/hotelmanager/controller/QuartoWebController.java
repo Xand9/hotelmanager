@@ -5,6 +5,7 @@ import com.hotelmanager.enums.TipoQuarto;
 
 import com.hotelmanager.exception.RegraDeNegocioException;
 import com.hotelmanager.model.Quarto;
+import com.hotelmanager.service.LimpezaDiariaService;
 import com.hotelmanager.service.QuartoService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -22,15 +23,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devolve tela
 
     private final QuartoService quartoService;
+    private final LimpezaDiariaService limpezaDiariaService;
 
-    public QuartoWebController(QuartoService quartoService) {
+    public QuartoWebController(QuartoService quartoService, LimpezaDiariaService limpezaDiariaService) {
         this.quartoService = quartoService;
+        this.limpezaDiariaService = limpezaDiariaService;
     }
 
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("quartos", quartoService.listarTodos());
         model.addAttribute("reservasAtivasPorQuarto", quartoService.buscarReservasAtivasPorQuarto());
+        model.addAttribute("chamadosAtivosPorQuarto", quartoService.buscarChamadosAtivosPorQuarto());
+        model.addAttribute("limpezasDiariasPorQuarto", limpezaDiariaService.buscarLimpezasDeHojePorQuarto());
         return "quartos";
     }
 
@@ -88,6 +93,22 @@ public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devo
     ) {
         try {
             quartoService.alterarStatus(id, status);
+        } catch (RegraDeNegocioException exception) {
+            redirectAttributes.addFlashAttribute("mensagemAviso", exception.getMessage());
+        }
+
+        return "redirect:/quartos";
+    }
+
+    @PostMapping("/{quartoId}/limpeza-diaria/{reservaId}/realizar")
+    public String marcarLimpezaDiaria(
+            @PathVariable Long quartoId,
+            @PathVariable Long reservaId,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            limpezaDiariaService.marcarLimpezaDeHojeComoRealizada(quartoId, reservaId);
+            redirectAttributes.addFlashAttribute("mensagemSucesso", "Limpeza diaria marcada como realizada.");
         } catch (RegraDeNegocioException exception) {
             redirectAttributes.addFlashAttribute("mensagemAviso", exception.getMessage());
         }
