@@ -343,6 +343,13 @@ h2 {
     color: var(--color-danger);
 }
 
+.alert-warning {
+    background: var(--color-warning-bg);
+    border: 1px solid #fed88a;
+    color: #8a5200;
+    margin-bottom: 18px;
+}
+
 input,
 select,
 textarea {

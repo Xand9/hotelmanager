@@ -26,6 +26,10 @@
             <a class="btn btn-primary-action btn-featured-action" th:href="@{/quartos/cadastro}">Cadastrar novo quarto</a>
         </div>
 
+        <div class="alert alert-warning" th:if="${mensagemAviso}" th:text="${mensagemAviso}">
+            Existe um chamado aberto para este quarto.
+        </div>
+
         <section class="data-card">
             <div class="section-title">
                 <div>
