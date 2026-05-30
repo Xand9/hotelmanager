@@ -21,6 +21,7 @@
                     <span class="badge badge-CHECKIN_REALIZADO">Check-in realizado</span>
                     <span class="badge badge-CHECKOUT_REALIZADO">Check-out realizado</span>
                     <span class="badge badge-CANCELADA">Cancelada</span>
+                    <span class="badge badge-NAO_COMPARECEU">Nao compareceu</span>
                 </div>
             </div>
         </div>
@@ -36,6 +37,9 @@
 
                 <div class="alert alert-danger" th:if="${mensagemErro}" th:text="${mensagemErro}">
                     O quarto nao esta disponivel para reserva.
+                </div>
+                <div class="alert alert-success" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}">
+                    Reserva marcada como nao compareceu.
                 </div>
                 <input type="hidden" th:field="*{id}">
 
@@ -68,6 +72,13 @@
                 <div class="field">
                     <label>Data de saída</label>
                     <input type="date" th:field="*{dataSaida}">
+                </div>
+
+                <div class="field">
+                    <label>Quantidade de hospedes</label>
+                    <input type="number" min="1" th:field="*{quantidadeHospedes}" placeholder="Ex: 2">
+                    <small>Deve respeitar a capacidade do quarto selecionado.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('quantidadeHospedes')}" th:errors="*{quantidadeHospedes}">Informe a quantidade de hospedes.</span>
                 </div>
 
                 <div class="field">
@@ -128,6 +139,7 @@
                                 <div class="cell-primary">
                                     <span th:text="${#temporals.format(item.dataEntrada, 'dd/MM/yyyy') + ' a ' + #temporals.format(item.dataSaida, 'dd/MM/yyyy')}">20/05 a 23/05</span>
                                     <span class="cell-subtitle" th:text="${item.quantidadeDiarias + ' diária(s)'}">3 diárias</span>
+                                    <span class="cell-subtitle" th:text="${item.quantidadeHospedes == null ? 'Quantidade de hospedes nao informada' : item.quantidadeHospedes + ' hospede(s)'}">2 hospedes</span>
                                 </div>
                             </td>
                             <td>
@@ -148,6 +160,9 @@
                                     </form>
                                     <form th:if="${item.status.name() == 'RESERVADA'}" th:action="@{/reservas/{id}/cancelar(id=${item.id})}" method="post" data-confirm="Cancelar esta reserva?">
                                         <button class="btn btn-sm btn-cancel" type="submit">Cancelar</button>
+                                    </form>
+                                    <form th:if="${item.status.name() == 'RESERVADA' && item.dataEntrada.isBefore(hoje)}" th:action="@{/reservas/{id}/nao-compareceu(id=${item.id})}" method="post" data-confirm="Marcar esta reserva como nao compareceu?">
+                                        <button class="btn btn-sm btn-warning" type="submit">Nao compareceu</button>
                                     </form>
                                 </div>
                             </td>

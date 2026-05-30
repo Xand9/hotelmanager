@@ -62,7 +62,7 @@ public class ReservaService {
         Hospede hospede = buscarHospedeAtivo(dto.hospedeId());
         Quarto quarto = buscarQuartoAtivo(dto.quartoId());
 
-        validarReserva(quarto, dto.dataEntrada(), dto.dataSaida(), null);
+        validarReserva(quarto, dto.dataEntrada(), dto.dataSaida(), dto.quantidadeHospedes(), null);
 
         Reserva reserva = new Reserva();
         reserva.setHospede(hospede);
@@ -70,6 +70,7 @@ public class ReservaService {
         reserva.setDataEntrada(dto.dataEntrada());
         reserva.setDataSaida(dto.dataSaida());
         reserva.setQuantidadeDiarias(calcularQuantidadeDiarias(dto.dataEntrada(), dto.dataSaida()));
+        reserva.setQuantidadeHospedes(dto.quantidadeHospedes());
         reserva.setValorTotal(calcularValorTotal(quarto, reserva.getQuantidadeDiarias()));
         reserva.setObservacoes(dto.observacoes());
         reserva.setStatus(StatusReserva.RESERVADA);
@@ -89,13 +90,14 @@ public class ReservaService {
         Hospede hospede = buscarHospedeAtivo(dto.hospedeId());
         Quarto quarto = buscarQuartoAtivo(dto.quartoId());
 
-        validarReserva(quarto, dto.dataEntrada(), dto.dataSaida(), id);
+        validarReserva(quarto, dto.dataEntrada(), dto.dataSaida(), dto.quantidadeHospedes(), id);
 
         reserva.setHospede(hospede);
         reserva.setQuarto(quarto);
         reserva.setDataEntrada(dto.dataEntrada());
         reserva.setDataSaida(dto.dataSaida());
         reserva.setQuantidadeDiarias(calcularQuantidadeDiarias(dto.dataEntrada(), dto.dataSaida()));
+        reserva.setQuantidadeHospedes(dto.quantidadeHospedes());
         reserva.setValorTotal(calcularValorTotal(quarto, reserva.getQuantidadeDiarias()));
         reserva.setObservacoes(dto.observacoes());
 
@@ -115,15 +117,38 @@ public class ReservaService {
         }
 
         Quarto quarto = reserva.getQuarto();
-        validarChamadoBloqueante(quarto);
+        if (LocalDate.now().isBefore(reserva.getDataEntrada())) {
+            throw new RegraDeNegocioException("Nao e possivel realizar check-in antes da data de entrada da reserva.");
+        }
 
-        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO || quarto.getStatus() == StatusQuarto.EM_LIMPEZA) {
-            throw new RegraDeNegocioException("Nao e possivel fazer check-in em quarto em limpeza ou manutencao.");
+        validarChamadoBloqueanteParaCheckin(quarto);
+
+        if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
+            throw new RegraDeNegocioException("Nao e possivel realizar check-in em um quarto em manutencao.");
+        }
+
+        if (quarto.getStatus() == StatusQuarto.EM_LIMPEZA) {
+            throw new RegraDeNegocioException("Nao e possivel realizar check-in em um quarto que ainda esta em limpeza.");
         }
 
         reserva.setStatus(StatusReserva.CHECKIN_REALIZADO);
         quarto.setStatus(StatusQuarto.OCUPADO);
         quartoRepository.save(quarto);
+        return reservaRepository.save(reserva);
+    }
+
+    public Reserva marcarNaoCompareceu(Long id) {
+        Reserva reserva = buscarPorId(id);
+
+        if (reserva.getStatus() != StatusReserva.RESERVADA) {
+            throw new RegraDeNegocioException("Apenas reservas reservadas podem ser marcadas como nao compareceu.");
+        }
+
+        if (!reserva.getDataEntrada().isBefore(LocalDate.now())) {
+            throw new RegraDeNegocioException("A reserva so pode ser marcada como nao compareceu apos a data de entrada.");
+        }
+
+        reserva.setStatus(StatusReserva.NAO_COMPARECEU);
         return reservaRepository.save(reserva);
     }
 
@@ -162,7 +187,13 @@ public class ReservaService {
         return quarto;
     }
 
-    private void validarReserva(Quarto quarto, LocalDate dataEntrada, LocalDate dataSaida, Long reservaIgnoradaId) {
+    private void validarReserva(
+            Quarto quarto,
+            LocalDate dataEntrada,
+            LocalDate dataSaida,
+            Integer quantidadeHospedes,
+            Long reservaIgnoradaId
+    ) {
         if (dataEntrada == null || dataSaida == null) {
             throw new RegraDeNegocioException("As datas de entrada e saida sao obrigatorias.");
         }
@@ -171,7 +202,8 @@ public class ReservaService {
             throw new RegraDeNegocioException("A data de saida deve ser posterior a data de entrada.");
         }
 
-        validarChamadoBloqueante(quarto);
+        validarCapacidadeDoQuarto(quarto, quantidadeHospedes);
+        validarChamadoBloqueanteParaReserva(quarto);
 
         if (quarto.getStatus() == StatusQuarto.EM_MANUTENCAO) {
             throw new RegraDeNegocioException("Nao e possivel reservar quarto em manutencao.");
@@ -182,7 +214,35 @@ public class ReservaService {
         }
     }
 
-    private void validarChamadoBloqueante(Quarto quarto) {
+    private void validarCapacidadeDoQuarto(Quarto quarto, Integer quantidadeHospedes) {
+        if (quantidadeHospedes == null) {
+            throw new RegraDeNegocioException("A quantidade de hospedes e obrigatoria.");
+        }
+
+        if (quantidadeHospedes <= 0) {
+            throw new RegraDeNegocioException("A quantidade de hospedes deve ser maior que zero.");
+        }
+
+        if (quarto.getCapacidade() != null && quantidadeHospedes > quarto.getCapacidade()) {
+            throw new RegraDeNegocioException("A quantidade de hospedes excede a capacidade do quarto.");
+        }
+    }
+
+    private void validarChamadoBloqueanteParaReserva(Quarto quarto) {
+        List<ChamadoInterno> chamadosBloqueantes = chamadoInternoRepository.findByQuartoIdAndStatusInAndTipoIn(
+                quarto.getId(),
+                List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
+                List.of(TipoChamado.MANUTENCAO)
+        );
+
+        if (chamadosBloqueantes.isEmpty()) {
+            return;
+        }
+
+        throw new RegraDeNegocioException("Nao e possivel reservar um quarto em manutencao.");
+    }
+
+    private void validarChamadoBloqueanteParaCheckin(Quarto quarto) {
         List<ChamadoInterno> chamadosBloqueantes = chamadoInternoRepository.findByQuartoIdAndStatusInAndTipoIn(
                 quarto.getId(),
                 List.of(StatusChamado.ABERTO, StatusChamado.EM_ANDAMENTO),
@@ -194,10 +254,18 @@ public class ReservaService {
         }
 
         ChamadoInterno chamado = chamadosBloqueantes.get(0);
+        if (chamado.getTipo() == TipoChamado.LIMPEZA) {
+            throw new RegraDeNegocioException("Nao e possivel realizar check-in em um quarto que ainda esta em limpeza.");
+        }
+
+        if (chamado.getTipo() == TipoChamado.MANUTENCAO) {
+            throw new RegraDeNegocioException("Nao e possivel realizar check-in em um quarto em manutencao.");
+        }
+
         throw new RegraDeNegocioException(
-                "Nao e possivel reservar este quarto porque existe um chamado ativo de "
+                "Nao e possivel realizar check-in porque existe um chamado ativo de "
                         + chamado.getTipo().getDescricao()
-                        + ". Conclua ou exclua o chamado antes de criar ou alterar a reserva."
+                        + ". Conclua ou exclua o chamado antes do check-in."
         );
     }
 

@@ -12,6 +12,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     List<Reserva> findByQuartoIdAndStatus(Long quartoId, StatusReserva status);
 
+    List<Reserva> findByQuartoIdAndStatusIn(Long quartoId, List<StatusReserva> status);
+
     List<Reserva> findByHospedeIdAndStatusIn(Long hospedeId, List<StatusReserva> status);
 
     List<Reserva> findByStatusOrderByDataEntradaAsc(StatusReserva status);

@@ -10,6 +10,7 @@ import com.hotelmanager.service.ReservaService;
 
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +41,7 @@ public class ReservaWebController {
 
     @GetMapping
     public String listar(Model model) {
-        prepararModelo(model, new ReservaFormDTO(null, null, null, null, null, null));
+        prepararModelo(model, new ReservaFormDTO(null, null, null, null, null, null, null));
         return "reservas";
     }
 
@@ -53,6 +54,7 @@ public class ReservaWebController {
                 reserva.getQuarto().getId(),
                 reserva.getDataEntrada(),
                 reserva.getDataSaida(),
+                reserva.getQuantidadeHospedes(),
                 reserva.getObservacoes()
         );
         prepararModelo(model, form);
@@ -72,6 +74,7 @@ public class ReservaWebController {
                 form.quartoId(),
                 form.dataEntrada(),
                 form.dataSaida(),
+                form.quantidadeHospedes(),
                 form.observacoes()
         );
 
@@ -120,10 +123,22 @@ public class ReservaWebController {
         return "redirect:/reservas";
     }
 
+    @PostMapping("/{id}/nao-compareceu")
+    public String marcarNaoCompareceu(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            reservaService.marcarNaoCompareceu(id);
+            redirectAttributes.addFlashAttribute("mensagemSucesso", "Reserva marcada como nao compareceu.");
+        } catch (RegraDeNegocioException exception) {
+            redirectAttributes.addFlashAttribute("mensagemErro", exception.getMessage());
+        }
+        return "redirect:/reservas";
+    }
+
     private void prepararModelo(Model model, ReservaFormDTO form) {
         model.addAttribute("reservaForm", form);
         model.addAttribute("reservas", reservaService.listarTodas());
         model.addAttribute("hospedes", hospedeService.listarTodos());
         model.addAttribute("quartos", quartoService.listarTodos());
+        model.addAttribute("hoje", LocalDate.now());
     }
 }

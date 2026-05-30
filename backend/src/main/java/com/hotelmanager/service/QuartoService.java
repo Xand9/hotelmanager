@@ -130,6 +130,7 @@ public class QuartoService {
 
     public void inativar(Long id) {
         Quarto quarto = buscarPorId(id);
+        validarQuartoPodeSerInativado(quarto);
         quarto.setAtivo(false);
         quartoRepository.save(quarto);
     }
@@ -199,6 +200,21 @@ public class QuartoService {
                         + (quartoOcupado
                         ? ". Use a aba Reservas para fazer check-out e liberar o quarto."
                         : ". Use a aba Reservas para fazer check-in, cancelar ou editar a reserva.")
+        );
+    }
+
+    private void validarQuartoPodeSerInativado(Quarto quarto) {
+        List<Reserva> reservasAtivas = reservaRepository.findByQuartoIdAndStatusIn(
+                quarto.getId(),
+                List.of(StatusReserva.RESERVADA, StatusReserva.CHECKIN_REALIZADO)
+        );
+
+        if (reservasAtivas.isEmpty()) {
+            return;
+        }
+
+        throw new RegraDeNegocioException(
+                "Nao e possivel inativar este quarto, pois ele possui reserva ativa ou hospedagem em andamento."
         );
     }
 

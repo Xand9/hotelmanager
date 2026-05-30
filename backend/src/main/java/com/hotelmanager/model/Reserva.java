@@ -51,6 +51,8 @@ public class Reserva {
 
     private Integer quantidadeDiarias;
 
+    private Integer quantidadeHospedes;
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(length = 40)

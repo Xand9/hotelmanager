@@ -118,8 +118,13 @@ public class QuartoWebController {//Recebe pedidos HTML chama QuartoService devo
     }
 
     @PostMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id) {
-        quartoService.inativar(id);
+    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            quartoService.inativar(id);
+        } catch (RegraDeNegocioException exception) {
+            redirectAttributes.addFlashAttribute("mensagemAviso", exception.getMessage());
+        }
+
         return "redirect:/quartos";
     }
 

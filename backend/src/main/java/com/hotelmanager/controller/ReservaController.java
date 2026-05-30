@@ -60,4 +60,9 @@ public class ReservaController {
     public Reserva realizarCheckout(@PathVariable Long id) {
         return reservaService.realizarCheckout(id);
     }
+
+    @PatchMapping("/{id}/nao-compareceu")
+    public Reserva marcarNaoCompareceu(@PathVariable Long id) {
+        return reservaService.marcarNaoCompareceu(id);
+    }
 }

@@ -41,6 +41,23 @@
                 </div>
             </div>
 
+            <div class="room-filter-panel" data-room-filters>
+                <div>
+                    <strong>Filtrar quartos</strong>
+                    <span>Use os filtros para separar status operacional, reservas futuras e chamados abertos.</span>
+                </div>
+                <div class="room-filter-actions" role="group" aria-label="Filtros de quartos">
+                    <button class="room-filter-chip active" type="button" data-room-filter="todos" aria-pressed="true">Todos</button>
+                    <button class="room-filter-chip filter-available" type="button" data-room-filter="status:DISPONIVEL" aria-pressed="false">Disponíveis</button>
+                    <button class="room-filter-chip filter-occupied" type="button" data-room-filter="status:OCUPADO" aria-pressed="false">Ocupados</button>
+                    <button class="room-filter-chip filter-cleaning" type="button" data-room-filter="status:EM_LIMPEZA" aria-pressed="false">Em limpeza</button>
+                    <button class="room-filter-chip filter-maintenance" type="button" data-room-filter="status:EM_MANUTENCAO" aria-pressed="false">Em manutenção</button>
+                    <button class="room-filter-chip filter-reserved" type="button" data-room-filter="reserva" aria-pressed="false">Com reserva</button>
+                    <button class="room-filter-chip filter-call" type="button" data-room-filter="chamado" aria-pressed="false">Com chamado</button>
+                    <button class="room-filter-chip filter-guest-request" type="button" data-room-filter="solicitacao" aria-pressed="false">Solicitação do hóspede</button>
+                </div>
+            </div>
+
             <div class="table-wrap">
                 <table class="table-modern">
                     <thead>
@@ -60,7 +77,13 @@
                             Use o botão Cadastrar novo quarto para adicionar as acomodações do hotel.
                         </td>
                     </tr>
-                    <tr th:each="item : ${quartos}" th:with="reservaAtiva=${reservasAtivasPorQuarto[item.id]}, chamadoAtivo=${chamadosAtivosPorQuarto[item.id]}, limpezaDiaria=${limpezasDiariasPorQuarto[item.id]}">
+                    <tr th:each="item : ${quartos}"
+                        th:with="reservaAtiva=${reservasAtivasPorQuarto[item.id]}, chamadoAtivo=${chamadosAtivosPorQuarto[item.id]}, limpezaDiaria=${limpezasDiariasPorQuarto[item.id]}"
+                        data-room-row
+                        th:attr="data-status-operacional=${item.status.name()},
+                                 data-tem-reserva=${reservaAtiva != null && reservaAtiva.status.name() == 'RESERVADA'},
+                                 data-tem-chamado=${chamadoAtivo != null},
+                                 data-tipo-chamado=${chamadoAtivo == null ? '' : chamadoAtivo.tipo.name()}">
                         <td>
                             <div class="cell-primary">
                                 <span class="cell-title" th:text="${'Quarto ' + item.numero}">Quarto 101</span>
@@ -121,6 +144,12 @@
                                     <button class="btn btn-sm btn-status-maintenance" type="submit">Manutenção</button>
                                 </form>
                             </div>
+                        </td>
+                    </tr>
+                    <tr class="room-filter-empty" data-room-filter-empty hidden>
+                        <td colspan="6" class="empty">
+                            <strong>Nenhum quarto encontrado para este filtro.</strong>
+                            Selecione outro filtro para consultar a operaÃ§Ã£o do hotel.
                         </td>
                     </tr>
                     </tbody>

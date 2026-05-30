@@ -4,7 +4,8 @@ public enum StatusReserva {
     RESERVADA("Reservada"),
     CHECKIN_REALIZADO("Check-in realizado"),
     CHECKOUT_REALIZADO("Check-out realizado"),
-    CANCELADA("Cancelada");
+    CANCELADA("Cancelada"),
+    NAO_COMPARECEU("Nao compareceu");
 
     private final String descricao;
 

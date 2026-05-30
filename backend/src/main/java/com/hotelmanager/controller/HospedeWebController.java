@@ -43,10 +43,16 @@ public class HospedeWebController {
             return "hospedes";
         }
 
-        if (hospede.getId() == null) {
-            hospedeService.cadastrar(hospede);
-        } else {
-            hospedeService.atualizar(hospede.getId(), hospede);
+        try {
+            if (hospede.getId() == null) {
+                hospedeService.cadastrar(hospede);
+            } else {
+                hospedeService.atualizar(hospede.getId(), hospede);
+            }
+        } catch (RegraDeNegocioException exception) {
+            model.addAttribute("mensagemAviso", exception.getMessage());
+            prepararModelo(model, hospede);
+            return "hospedes";
         }
 
         return "redirect:/hospedes";

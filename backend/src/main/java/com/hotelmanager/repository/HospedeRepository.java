@@ -7,4 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface HospedeRepository extends JpaRepository<Hospede, Long> {
 
     List<Hospede> findByAtivoTrue();//Buscar uma lista de hóspedes onde o campo ativo seja true.
+    boolean existsByDocumentoAndAtivoTrue(String documento);
+
+    boolean existsByDocumentoAndAtivoTrueAndIdNot(String documento, Long id);
 }

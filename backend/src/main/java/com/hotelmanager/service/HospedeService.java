@@ -34,6 +34,8 @@ public class HospedeService {
     }
 
     public Hospede cadastrar(Hospede hospede) {
+        normalizarDocumento(hospede);
+        validarDocumentoDuplicadoNoCadastro(hospede);
         hospede.setAtivo(true);
         hospede.setDataCadastro(LocalDateTime.now());
         return hospedeRepository.save(hospede);
@@ -41,6 +43,8 @@ public class HospedeService {
 
     public Hospede atualizar(Long id, Hospede hospedeAtualizado) {
         Hospede hospede = buscarPorId(id);
+        normalizarDocumento(hospedeAtualizado);
+        validarDocumentoDuplicadoNaAtualizacao(id, hospedeAtualizado);
 
         hospede.setNome(hospedeAtualizado.getNome());
         hospede.setDocumento(hospedeAtualizado.getDocumento());
@@ -58,6 +62,32 @@ public class HospedeService {
 
         hospede.setAtivo(false);
         hospedeRepository.save(hospede);
+    }
+
+    private void normalizarDocumento(Hospede hospede) {
+        if (hospede.getDocumento() != null) {
+            hospede.setDocumento(hospede.getDocumento().trim());
+        }
+    }
+
+    private void validarDocumentoDuplicadoNoCadastro(Hospede hospede) {
+        if (hospede.getDocumento() == null || hospede.getDocumento().isBlank()) {
+            return;
+        }
+
+        if (hospedeRepository.existsByDocumentoAndAtivoTrue(hospede.getDocumento())) {
+            throw new RegraDeNegocioException("Ja existe um hospede ativo cadastrado com este CPF/documento.");
+        }
+    }
+
+    private void validarDocumentoDuplicadoNaAtualizacao(Long id, Hospede hospede) {
+        if (hospede.getDocumento() == null || hospede.getDocumento().isBlank()) {
+            return;
+        }
+
+        if (hospedeRepository.existsByDocumentoAndAtivoTrueAndIdNot(hospede.getDocumento(), id)) {
+            throw new RegraDeNegocioException("Ja existe outro hospede ativo cadastrado com este CPF/documento.");
+        }
     }
 
     private void validarReservaAtiva(Hospede hospede) {
