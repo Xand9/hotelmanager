@@ -26,21 +26,27 @@ public class HospedeWebController {
 
     @GetMapping
     public String listar(Model model) {
-        prepararModelo(model, new Hospede());
+        model.addAttribute("hospedes", hospedeService.listarTodos());
         return "hospedes";
+    }
+
+    @GetMapping("/cadastro")
+    public String cadastro(Model model) {
+        prepararFormulario(model, new Hospede());
+        return "cadastro-hospede";
     }
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
-        prepararModelo(model, hospedeService.buscarPorId(id));
-        return "hospedes";
+        prepararFormulario(model, hospedeService.buscarPorId(id));
+        return "cadastro-hospede";
     }
 
     @PostMapping("/salvar")
     public String salvar(@Valid @ModelAttribute("hospede") Hospede hospede, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            prepararModelo(model, hospede);
-            return "hospedes";
+            prepararFormulario(model, hospede);
+            return "cadastro-hospede";
         }
 
         try {
@@ -51,8 +57,8 @@ public class HospedeWebController {
             }
         } catch (RegraDeNegocioException exception) {
             model.addAttribute("mensagemAviso", exception.getMessage());
-            prepararModelo(model, hospede);
-            return "hospedes";
+            prepararFormulario(model, hospede);
+            return "cadastro-hospede";
         }
 
         return "redirect:/hospedes";
@@ -69,8 +75,7 @@ public class HospedeWebController {
         return "redirect:/hospedes";
     }
 
-    private void prepararModelo(Model model, Hospede hospede) {
+    private void prepararFormulario(Model model, Hospede hospede) {
         model.addAttribute("hospede", hospede);
-        model.addAttribute("hospedes", hospedeService.listarTodos());
     }
 }

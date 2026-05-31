@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de reserva | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('reservas')}"></div>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Hospedagem</div>
+                <h1 th:text="${reservaForm.id} == null ? 'Cadastrar reserva' : 'Editar reserva'">Cadastrar reserva</h1>
+                <p class="subtitle">Use esta tela para registrar a reserva. Acompanhamento, check-in e check-out continuam na aba Reservas.</p>
+            </div>
+        </div>
+
+        <section class="grid form-page-layout">
+            <form class="form-card form-grid" th:action="@{/reservas/salvar}" th:object="${reservaForm}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h2 th:text="*{id} == null ? 'Nova reserva' : 'Dados da reserva'">Nova reserva</h2>
+                        <p>O sistema calcula automaticamente diárias e valor total com base no quarto escolhido.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" th:if="${mensagemErro}" th:text="${mensagemErro}">
+                    Confira os dados obrigatórios da reserva.
+                </div>
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field">
+                    <label>Hóspede</label>
+                    <select th:field="*{hospedeId}" th:errorclass="input-error">
+                        <option value="">Selecione o hóspede</option>
+                        <option th:each="hospede : ${hospedes}" th:value="${hospede.id}" th:text="${hospede.nome + ' - ' + hospede.documento}"></option>
+                    </select>
+                    <small>Cadastre o hóspede antes de criar a reserva.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('hospedeId')}" th:errors="*{hospedeId}">Selecione o hóspede.</span>
+                </div>
+
+                <div class="field">
+                    <label>Quarto</label>
+                    <select th:field="*{quartoId}" th:errorclass="input-error">
+                        <option value="">Selecione o quarto</option>
+                        <option th:each="quarto : ${quartos}"
+                                th:value="${quarto.id}"
+                                th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.tipo.descricao + ' - ' + quarto.status.descricao}">
+                        </option>
+                    </select>
+                    <small>Reservas futuras são permitidas quando os períodos não se sobrepõem.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('quartoId')}" th:errors="*{quartoId}">Selecione o quarto.</span>
+                </div>
+
+                <div class="field">
+                    <label>Data de entrada</label>
+                    <input type="date" th:field="*{dataEntrada}" th:errorclass="input-error">
+                    <span class="field-error" th:if="${#fields.hasErrors('dataEntrada')}" th:errors="*{dataEntrada}">Informe a entrada.</span>
+                </div>
+
+                <div class="field">
+                    <label>Data de saída</label>
+                    <input type="date" th:field="*{dataSaida}" th:errorclass="input-error">
+                    <span class="field-error" th:if="${#fields.hasErrors('dataSaida')}" th:errors="*{dataSaida}">Informe a saída.</span>
+                </div>
+
+                <div class="field">
+                    <label>Quantidade de hóspedes</label>
+                    <input type="number" min="1" th:field="*{quantidadeHospedes}" th:errorclass="input-error" placeholder="Ex: 2">
+                    <small>Deve respeitar a capacidade do quarto selecionado.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('quantidadeHospedes')}" th:errors="*{quantidadeHospedes}">Informe a quantidade de hóspedes.</span>
+                </div>
+
+                <div class="field">
+                    <label>Observações</label>
+                    <textarea th:field="*{observacoes}" maxlength="210" placeholder="Ex: hóspede chegará após 20h, empresa conveniada ou preferência de andar."></textarea>
+                    <small>Limite de 210 caracteres.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('observacoes')}" th:errors="*{observacoes}">Erro</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary-action" type="submit">Salvar reserva</button>
+                    <a class="btn btn-secondary" th:href="@{/reservas}">Voltar para reservas</a>
+                </div>
+            </form>
+
+            <aside class="data-card helper-card">
+                <div class="section-title">
+                    <div>
+                        <h2>Como usar</h2>
+                        <p>Esta tela separa o cadastro da rotina operacional.</p>
+                    </div>
+                </div>
+                <div class="helper-list">
+                    <div>
+                        <strong>Cadastro</strong>
+                        <span>Selecione hóspede, quarto, datas e quantidade de hóspedes.</span>
+                    </div>
+                    <div>
+                        <strong>Conflitos</strong>
+                        <span>O sistema bloqueia reservas para o mesmo quarto em períodos conflitantes.</span>
+                    </div>
+                    <div>
+                        <strong>Operação</strong>
+                        <span>Depois de salvar, volte para Reservas para check-in, check-out ou cancelamento.</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

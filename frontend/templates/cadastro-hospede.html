@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de hóspede | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('hospedes')}"></div>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Recepção</div>
+                <h1 th:text="${hospede.id} == null ? 'Cadastrar hóspede' : 'Editar hóspede'">Cadastrar hóspede</h1>
+                <p class="subtitle">Use esta tela para incluir ou alterar dados cadastrais do hóspede antes de criar reservas e check-ins.</p>
+            </div>
+        </div>
+
+        <section class="grid form-page-layout">
+            <form class="form-card form-grid" th:action="@{/hospedes/salvar}" th:object="${hospede}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h2 th:text="*{id} == null ? 'Novo hóspede' : 'Dados do hóspede'">Novo hóspede</h2>
+                        <p>Informe os dados principais para contato, identificação e atendimento.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" th:if="${#fields.hasErrors()}">
+                    Existem campos obrigatórios ou inválidos. Confira as mensagens abaixo antes de salvar.
+                </div>
+                <div class="alert alert-warning" th:if="${mensagemAviso}" th:text="${mensagemAviso}">
+                    Já existe hóspede ativo com este documento.
+                </div>
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field">
+                    <label>Nome completo</label>
+                    <input th:field="*{nome}" th:errorclass="input-error" placeholder="Ex: João Silva">
+                    <span class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">Informe o nome.</span>
+                </div>
+
+                <div class="field">
+                    <label>CPF ou documento</label>
+                    <input th:field="*{documento}" maxlength="14" inputmode="numeric" data-mask="cpf" th:errorclass="input-error" placeholder="Ex: 123.456.789-00">
+                    <small>Digite apenas os números; o sistema aplica a máscara automaticamente.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}">Erro</span>
+                </div>
+
+                <div class="field">
+                    <label>Telefone</label>
+                    <input th:field="*{telefone}" maxlength="15" inputmode="numeric" data-mask="telefone" th:errorclass="input-error" placeholder="Ex: (34) 99999-9999">
+                    <small>Digite apenas os números; o sistema aplica a máscara automaticamente.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}">Erro</span>
+                </div>
+
+                <div class="field">
+                    <label>E-mail</label>
+                    <input type="email" th:field="*{email}" th:errorclass="input-error" placeholder="cliente@email.com">
+                    <span class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Erro</span>
+                </div>
+
+                <div class="field">
+                    <label>Endereço</label>
+                    <input th:field="*{endereco}" placeholder="Cidade - UF">
+                </div>
+
+                <div class="field">
+                    <label>Observações</label>
+                    <textarea th:field="*{observacoes}" placeholder="Preferências, dados de empresa, restrições ou informações úteis para atendimento."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary-action" type="submit">Salvar hóspede</button>
+                    <a class="btn btn-secondary" th:href="@{/hospedes}">Voltar para hóspedes</a>
+                </div>
+            </form>
+
+            <aside class="data-card helper-card">
+                <div class="section-title">
+                    <div>
+                        <h2>Como usar</h2>
+                        <p>Esta tela concentra apenas o cadastro do cliente.</p>
+                    </div>
+                </div>
+                <div class="helper-list">
+                    <div>
+                        <strong>Cadastro</strong>
+                        <span>Registre nome, documento e contato antes de criar uma reserva.</span>
+                    </div>
+                    <div>
+                        <strong>Consulta</strong>
+                        <span>Volte para Hóspedes para consultar a lista completa e editar registros existentes.</span>
+                    </div>
+                    <div>
+                        <strong>Reservas</strong>
+                        <span>Hóspedes inativos ou com restrições não devem ser usados em novas reservas.</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

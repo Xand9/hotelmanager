@@ -30,15 +30,21 @@ public class ChamadoInternoController {
 
     @GetMapping
     public String listar(Model model) {
-        prepararModelo(model, chamadoInternoService.criarFormulario());
+        model.addAttribute("chamados", chamadoInternoService.listarTodos());
         return "chamados";
+    }
+
+    @GetMapping("/cadastro")
+    public String cadastro(Model model) {
+        prepararFormulario(model, chamadoInternoService.criarFormulario());
+        return "cadastro-chamado";
     }
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         ChamadoInterno chamado = chamadoInternoService.buscarPorId(id);
-        prepararModelo(model, chamadoInternoService.criarFormulario(chamado));
-        return "chamados";
+        prepararFormulario(model, chamadoInternoService.criarFormulario(chamado));
+        return "cadastro-chamado";
     }
 
     @PostMapping("/salvar")
@@ -48,8 +54,8 @@ public class ChamadoInternoController {
             Model model
     ) {
         if (result.hasErrors()) {
-            prepararModelo(model, form);
-            return "chamados";
+            prepararFormulario(model, form);
+            return "cadastro-chamado";
         }
 
         chamadoInternoService.salvar(form);
@@ -68,9 +74,8 @@ public class ChamadoInternoController {
         return "redirect:/chamados";
     }
 
-    private void prepararModelo(Model model, ChamadoInternoFormDTO form) {
+    private void prepararFormulario(Model model, ChamadoInternoFormDTO form) {
         model.addAttribute("chamadoForm", form);
-        model.addAttribute("chamados", chamadoInternoService.listarTodos());
         model.addAttribute("quartos", quartoService.listarTodos());
         model.addAttribute("tipos", TipoChamado.values());
         model.addAttribute("statusChamados", StatusChamado.values());

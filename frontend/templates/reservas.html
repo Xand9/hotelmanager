@@ -10,95 +10,56 @@
 <div class="app-shell">
     <div th:replace="~{fragments/sidebar :: sidebar('reservas')}"></div>
 
-    <main class="content">
+    <main class="content content-wide">
         <div class="page-header">
             <div>
                 <div class="eyebrow">Hospedagem</div>
                 <h1>Reservas e check-in</h1>
-                <p class="subtitle">Selecione hóspede, quarto e datas para criar a reserva. Depois acompanhe o fluxo de check-in, check-out e cancelamento.</p>
+                <p class="subtitle">Acompanhe reservas, check-in, check-out e cancelamentos. Use o botão Cadastrar nova reserva para abrir a tela de cadastro.</p>
                 <div class="status-legend">
                     <span class="badge badge-RESERVADA">Reservada</span>
                     <span class="badge badge-CHECKIN_REALIZADO">Check-in realizado</span>
                     <span class="badge badge-CHECKOUT_REALIZADO">Check-out realizado</span>
                     <span class="badge badge-CANCELADA">Cancelada</span>
-                    <span class="badge badge-NAO_COMPARECEU">Nao compareceu</span>
+                    <span class="badge badge-NAO_COMPARECEU">Não compareceu</span>
                 </div>
             </div>
+            <a class="btn btn-primary-action btn-featured-action" th:href="@{/reservas/cadastro}">
+                Cadastrar nova reserva
+            </a>
         </div>
 
-        <section class="grid module-layout">
-            <form class="form-card form-grid" th:action="@{/reservas/salvar}" th:object="${reservaForm}" method="post">
-                <div class="section-title">
-                    <div>
-                        <h2 th:text="*{id} == null ? 'Nova reserva' : 'Editar reserva'">Nova reserva</h2>
-                        <p>O sistema calcula automaticamente diárias e valor total com base no quarto escolhido.</p>
-                    </div>
-                </div>
+        <div class="alert alert-danger" th:if="${mensagemErro}" th:text="${mensagemErro}">
+            O quarto não está disponível para reserva.
+        </div>
+        <div class="alert alert-success" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}">
+            Reserva marcada como não compareceu.
+        </div>
 
-                <div class="alert alert-danger" th:if="${mensagemErro}" th:text="${mensagemErro}">
-                    O quarto nao esta disponivel para reserva.
-                </div>
-                <div class="alert alert-success" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}">
-                    Reserva marcada como nao compareceu.
-                </div>
-                <input type="hidden" th:field="*{id}">
-
-                <div class="field">
-                    <label>Hóspede</label>
-                    <select th:field="*{hospedeId}">
-                        <option value="">Selecione o hóspede</option>
-                        <option th:each="hospede : ${hospedes}" th:value="${hospede.id}" th:text="${hospede.nome + ' - ' + hospede.documento}"></option>
-                    </select>
-                    <small>Cadastre o hóspede antes de criar a reserva.</small>
-                </div>
-
-                <div class="field">
-                    <label>Quarto</label>
-                    <select th:field="*{quartoId}">
-                        <option value="">Selecione o quarto</option>
-                        <option th:each="quarto : ${quartos}"
-                                th:value="${quarto.id}"
-                                th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.tipo.descricao + ' - ' + quarto.status.descricao}">
-                        </option>
-                    </select>
-                    <small>O sistema permite reservas futuras para o mesmo quarto quando os períodos não se sobrepõem.</small>
-                </div>
-
-                <div class="field">
-                    <label>Data de entrada</label>
-                    <input type="date" th:field="*{dataEntrada}">
-                </div>
-
-                <div class="field">
-                    <label>Data de saída</label>
-                    <input type="date" th:field="*{dataSaida}">
-                </div>
-
-                <div class="field">
-                    <label>Quantidade de hospedes</label>
-                    <input type="number" min="1" th:field="*{quantidadeHospedes}" placeholder="Ex: 2">
-                    <small>Deve respeitar a capacidade do quarto selecionado.</small>
-                    <span class="field-error" th:if="${#fields.hasErrors('quantidadeHospedes')}" th:errors="*{quantidadeHospedes}">Informe a quantidade de hospedes.</span>
-                </div>
-
-                <div class="field">
-                    <label>Observações</label>
-                    <textarea th:field="*{observacoes}" maxlength="210" placeholder="Ex: hóspede chegará após 20h, empresa conveniada ou preferência de andar."></textarea>
-                    <small>Limite de 210 caracteres.</small>
-                    <span class="field-error" th:if="${#fields.hasErrors('observacoes')}" th:errors="*{observacoes}">Erro</span>
-                </div>
-
-                <div class="form-actions">
-                    <button class="btn btn-primary-action" type="submit">Salvar reserva</button>
-                    <a class="btn btn-secondary" th:href="@{/reservas}">Limpar</a>
-                </div>
-            </form>
-
-            <div class="data-card">
+        <section>
+            <div class="data-card reservation-list-card">
                 <div class="section-title">
                     <div>
                         <h2>Reservas</h2>
                         <p>Ações disponíveis mudam conforme o status: primeiro check-in, depois check-out.</p>
+                    </div>
+                </div>
+
+                <div class="room-filter-panel reservation-filter-panel" data-reservation-filters th:attr="data-hoje=${hoje}">
+                    <div>
+                        <strong>Filtrar reservas</strong>
+                        <span>Priorize reservas em andamento, entradas do dia, vencidas e histórico sem misturar tudo na mesma consulta.</span>
+                    </div>
+                    <div class="room-filter-actions reservation-filter-actions" aria-label="Filtros de reservas">
+                        <button class="room-filter-chip reservation-filter-chip active" type="button" data-reservation-filter="todas" aria-pressed="true">Todas</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-reserved" type="button" data-reservation-filter="status:RESERVADA" aria-pressed="false">Reservadas</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-occupied" type="button" data-reservation-filter="status:CHECKIN_REALIZADO" aria-pressed="false">Check-in realizado</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-history" type="button" data-reservation-filter="status:CHECKOUT_REALIZADO" aria-pressed="false">Check-out realizado</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-maintenance" type="button" data-reservation-filter="status:CANCELADA" aria-pressed="false">Canceladas</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-warning" type="button" data-reservation-filter="status:NAO_COMPARECEU" aria-pressed="false">Não compareceu</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-expired" type="button" data-reservation-filter="vencidas" aria-pressed="false">Vencidas</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-today" type="button" data-reservation-filter="hoje" aria-pressed="false">Hoje</button>
+                        <button class="room-filter-chip reservation-filter-chip filter-available" type="button" data-reservation-filter="futuras" aria-pressed="false">Futuras</button>
                     </div>
                 </div>
 
@@ -119,10 +80,12 @@
                         <tr th:if="${#lists.isEmpty(reservas)}">
                             <td colspan="7" class="empty">
                                 <strong>Nenhuma reserva cadastrada.</strong>
-                                Crie uma reserva para iniciar o controle de hospedagens.
+                                Use o botão Cadastrar nova reserva para iniciar o controle de hospedagens.
                             </td>
                         </tr>
-                        <tr th:each="item : ${reservas}">
+                        <tr th:each="item : ${reservas}"
+                            data-reservation-row
+                            th:attr="data-status-reserva=${item.status.name()}, data-data-entrada=${item.dataEntrada}, data-data-saida=${item.dataSaida}">
                             <td>
                                 <div class="cell-primary">
                                     <span class="cell-title" th:text="${item.hospede.nome}">Hóspede</span>
@@ -139,7 +102,7 @@
                                 <div class="cell-primary">
                                     <span th:text="${#temporals.format(item.dataEntrada, 'dd/MM/yyyy') + ' a ' + #temporals.format(item.dataSaida, 'dd/MM/yyyy')}">20/05 a 23/05</span>
                                     <span class="cell-subtitle" th:text="${item.quantidadeDiarias + ' diária(s)'}">3 diárias</span>
-                                    <span class="cell-subtitle" th:text="${item.quantidadeHospedes == null ? 'Quantidade de hospedes nao informada' : item.quantidadeHospedes + ' hospede(s)'}">2 hospedes</span>
+                                    <span class="cell-subtitle" th:text="${item.quantidadeHospedes == null ? 'Quantidade de hóspedes não informada' : item.quantidadeHospedes + ' hóspede(s)'}">2 hóspedes</span>
                                 </div>
                             </td>
                             <td>
@@ -161,10 +124,16 @@
                                     <form th:if="${item.status.name() == 'RESERVADA'}" th:action="@{/reservas/{id}/cancelar(id=${item.id})}" method="post" data-confirm="Cancelar esta reserva?">
                                         <button class="btn btn-sm btn-cancel" type="submit">Cancelar</button>
                                     </form>
-                                    <form th:if="${item.status.name() == 'RESERVADA' && item.dataEntrada.isBefore(hoje)}" th:action="@{/reservas/{id}/nao-compareceu(id=${item.id})}" method="post" data-confirm="Marcar esta reserva como nao compareceu?">
-                                        <button class="btn btn-sm btn-warning" type="submit">Nao compareceu</button>
+                                    <form th:if="${item.status.name() == 'RESERVADA' && item.dataEntrada.isBefore(hoje)}" th:action="@{/reservas/{id}/nao-compareceu(id=${item.id})}" method="post" data-confirm="Marcar esta reserva como não compareceu?">
+                                        <button class="btn btn-sm btn-warning" type="submit">Não compareceu</button>
                                     </form>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr data-reservation-filter-empty th:if="${!#lists.isEmpty(reservas)}" hidden>
+                            <td colspan="7" class="empty">
+                                <strong>Nenhuma reserva encontrada para este filtro.</strong>
+                                Escolha outro filtro para consultar reservas ativas ou histórico.
                             </td>
                         </tr>
                         </tbody>

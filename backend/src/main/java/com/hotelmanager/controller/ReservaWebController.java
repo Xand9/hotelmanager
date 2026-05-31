@@ -41,8 +41,14 @@ public class ReservaWebController {
 
     @GetMapping
     public String listar(Model model) {
-        prepararModelo(model, new ReservaFormDTO(null, null, null, null, null, null, null));
+        prepararLista(model);
         return "reservas";
+    }
+
+    @GetMapping("/cadastro")
+    public String cadastro(Model model) {
+        prepararFormulario(model, new ReservaFormDTO(null, null, null, null, null, null, null));
+        return "cadastro-reserva";
     }
 
     @GetMapping("/{id}/editar")
@@ -57,16 +63,16 @@ public class ReservaWebController {
                 reserva.getQuantidadeHospedes(),
                 reserva.getObservacoes()
         );
-        prepararModelo(model, form);
-        return "reservas";
+        prepararFormulario(model, form);
+        return "cadastro-reserva";
     }
 
     @PostMapping("/salvar")
     public String salvar(@Valid @ModelAttribute("reservaForm") ReservaFormDTO form, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("mensagemErro", "Confira os dados obrigatorios da reserva.");
-            prepararModelo(model, form);
-            return "reservas";
+            prepararFormulario(model, form);
+            return "cadastro-reserva";
         }
 
         ReservaRequestDTO dto = new ReservaRequestDTO(
@@ -86,8 +92,8 @@ public class ReservaWebController {
             }
         } catch (RegraDeNegocioException exception) {
             model.addAttribute("mensagemErro", exception.getMessage());
-            prepararModelo(model, form);
-            return "reservas";
+            prepararFormulario(model, form);
+            return "cadastro-reserva";
         }
 
         return "redirect:/reservas";
@@ -134,11 +140,14 @@ public class ReservaWebController {
         return "redirect:/reservas";
     }
 
-    private void prepararModelo(Model model, ReservaFormDTO form) {
-        model.addAttribute("reservaForm", form);
+    private void prepararLista(Model model) {
         model.addAttribute("reservas", reservaService.listarTodas());
+        model.addAttribute("hoje", LocalDate.now());
+    }
+
+    private void prepararFormulario(Model model, ReservaFormDTO form) {
+        model.addAttribute("reservaForm", form);
         model.addAttribute("hospedes", hospedeService.listarTodos());
         model.addAttribute("quartos", quartoService.listarTodos());
-        model.addAttribute("hoje", LocalDate.now());
     }
 }

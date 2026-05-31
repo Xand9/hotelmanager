@@ -17,61 +17,17 @@
                 <h1>Cadastro de hóspedes</h1>
                 <p class="subtitle">Organize dados de contato, documento e observações úteis para agilizar reserva, check-in e atendimento na recepção.</p>
             </div>
+            <a class="btn btn-primary-action btn-featured-action" th:href="@{/hospedes/cadastro}">
+                Cadastrar novo hóspede
+            </a>
         </div>
 
         <div class="alert alert-warning" th:if="${mensagemAviso}" th:text="${mensagemAviso}">
-            NÃ£o Ã© possÃ­vel excluir este hÃ³spede porque ele possui reserva ativa.
+            Não é possível excluir este hóspede porque ele possui reserva ativa.
         </div>
 
-        <section class="grid module-layout hospedes-layout">
-            <form class="form-card form-grid" th:action="@{/hospedes/salvar}" th:object="${hospede}" method="post">
-                <div class="section-title">
-                    <div>
-                        <h2 th:text="*{id} == null ? 'Novo hóspede' : 'Editar hóspede'">Novo hóspede</h2>
-                        <p>Cadastre clientes antes de criar reservas ou hospedagens.</p>
-                    </div>
-                </div>
-                <input type="hidden" th:field="*{id}">
-
-                <div class="field">
-                    <label>Nome completo</label>
-                    <input th:field="*{nome}" placeholder="Ex: João Silva">
-                </div>
-
-                <div class="field">
-                    <label>CPF ou documento</label>
-                    <input th:field="*{documento}" maxlength="14" inputmode="numeric" data-mask="cpf" placeholder="Ex: 123.456.789-00">
-                    <span class="field-error" th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}">Erro</span>
-                </div>
-
-                <div class="field">
-                    <label>Telefone</label>
-                    <input th:field="*{telefone}" maxlength="15" inputmode="numeric" data-mask="telefone" placeholder="Ex: (34) 99999-9999">
-                    <span class="field-error" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}">Erro</span>
-                </div>
-
-                <div class="field">
-                    <label>E-mail</label>
-                    <input type="email" th:field="*{email}" placeholder="cliente@email.com">
-                </div>
-
-                <div class="field">
-                    <label>Endereço</label>
-                    <input th:field="*{endereco}" placeholder="Cidade - UF">
-                </div>
-
-                <div class="field">
-                    <label>Observações</label>
-                    <textarea th:field="*{observacoes}" placeholder="Preferências, dados de empresa, restrições ou informações úteis para atendimento."></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button class="btn btn-primary-action" type="submit">Salvar hóspede</button>
-                    <a class="btn btn-secondary" th:href="@{/hospedes}">Limpar</a>
-                </div>
-            </form>
-
-            <div class="data-card">
+        <section>
+            <div class="data-card hospedes-list-card">
                 <div class="section-title">
                     <div>
                         <h2>Hóspedes cadastrados</h2>
@@ -94,7 +50,7 @@
                         <tr th:if="${#lists.isEmpty(hospedes)}">
                             <td colspan="5" class="empty">
                                 <strong>Nenhum hóspede cadastrado.</strong>
-                                Use o formulário para cadastrar o primeiro cliente.
+                                Use o botão Cadastrar novo hóspede para adicionar o primeiro cliente.
                             </td>
                         </tr>
                         <tr th:each="item : ${hospedes}">

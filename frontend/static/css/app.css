@@ -258,6 +258,14 @@ h2 {
     align-items: start;
 }
 
+.reservation-list-card {
+    width: 100%;
+}
+
+.hospedes-list-card {
+    width: 100%;
+}
+
 .hospedes-layout {
     grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
 }
@@ -708,7 +716,10 @@ textarea {
 }
 
 .room-filter-chip.filter-cleaning.active,
-.room-filter-chip.filter-call.active {
+.room-filter-chip.filter-call.active,
+.room-filter-chip.filter-warning.active,
+.room-filter-chip.filter-expired.active,
+.room-filter-chip.filter-today.active {
     background: var(--color-warning);
     border-color: var(--color-warning);
     color: #2b1700;
@@ -717,6 +728,11 @@ textarea {
 .room-filter-chip.filter-maintenance.active {
     background: var(--color-danger);
     border-color: var(--color-danger);
+}
+
+.room-filter-chip.filter-history.active {
+    background: var(--color-purple);
+    border-color: var(--color-purple);
 }
 
 .room-filter-chip.filter-guest-request.active {

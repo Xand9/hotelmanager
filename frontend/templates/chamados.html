@@ -10,7 +10,7 @@
 <div class="app-shell">
     <div th:replace="~{fragments/sidebar :: sidebar('chamados')}"></div>
 
-    <main class="content">
+    <main class="content content-wide">
         <div class="page-header">
             <div>
                 <div class="eyebrow">Operação interna</div>
@@ -23,53 +23,12 @@
                     <span class="badge badge-CANCELADO">Cancelado</span>
                 </div>
             </div>
+            <a class="btn btn-primary-action btn-featured-action" th:href="@{/chamados/cadastro}">
+                Cadastrar novo chamado
+            </a>
         </div>
 
-        <section class="grid module-layout">
-            <form class="form-card form-grid" th:action="@{/chamados/salvar}" th:object="${chamadoForm}" method="post">
-                <div class="section-title">
-                    <div>
-                        <h2 th:text="*{id} == null ? 'Novo chamado' : 'Editar chamado'">Novo chamado</h2>
-                        <p>Use para limpeza, manutenção, pedido de hóspede ou outra demanda interna.</p>
-                    </div>
-                </div>
-                <input type="hidden" th:field="*{id}">
-
-                <div class="field">
-                    <label>Quarto relacionado</label>
-                    <select th:field="*{quartoId}">
-                        <option value="">Selecione o quarto</option>
-                        <option th:each="quarto : ${quartos}" th:value="${quarto.id}" th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.status.descricao}"></option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>Tipo do chamado</label>
-                    <select th:field="*{tipo}">
-                        <option value="">Selecione o tipo</option>
-                        <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
-                    </select>
-                    <small>Chamados de limpeza ou manutenção podem atualizar o status operacional do quarto.</small>
-                </div>
-
-                <div class="field">
-                    <label>Status</label>
-                    <select th:field="*{status}">
-                        <option th:each="status : ${statusChamados}" th:value="${status}" th:text="${status.descricao}"></option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>Descrição</label>
-                    <textarea th:field="*{descricao}" placeholder="Ex: quarto 203 precisa trocar lâmpada, ar-condicionado com problema ou hóspede pediu toalha extra."></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button class="btn btn-primary-action" type="submit">Salvar chamado</button>
-                    <a class="btn btn-secondary" th:href="@{/chamados}">Limpar</a>
-                </div>
-            </form>
-
+        <section>
             <div class="data-card">
                 <div class="section-title">
                     <div>
@@ -94,7 +53,7 @@
                         <tr th:if="${#lists.isEmpty(chamados)}">
                             <td colspan="6" class="empty">
                                 <strong>Nenhum chamado registrado.</strong>
-                                Abra uma demanda para limpeza, manutenção ou solicitação interna.
+                                Use o botão Cadastrar novo chamado para abrir uma demanda de limpeza, manutenção ou solicitação interna.
                             </td>
                         </tr>
                         <tr th:each="item : ${chamados}">

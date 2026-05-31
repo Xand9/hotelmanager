@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de chamado | Izzy Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('chamados')}"></div>
+
+    <main class="content">
+        <div class="page-header">
+            <div>
+                <div class="eyebrow">Operação interna</div>
+                <h1 th:text="${chamadoForm.id} == null ? 'Cadastrar chamado' : 'Editar chamado'">Cadastrar chamado</h1>
+                <p class="subtitle">Use esta tela para registrar demandas internas. Acompanhamento e mudança rápida de status continuam na aba Chamados.</p>
+            </div>
+        </div>
+
+        <section class="grid form-page-layout">
+            <form class="form-card form-grid" th:action="@{/chamados/salvar}" th:object="${chamadoForm}" method="post">
+                <div class="section-title">
+                    <div>
+                        <h2 th:text="*{id} == null ? 'Novo chamado' : 'Dados do chamado'">Novo chamado</h2>
+                        <p>Use para limpeza, manutenção, pedido de hóspede ou outra demanda interna.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" th:if="${#fields.hasErrors()}">
+                    Existem campos obrigatórios sem preencher. Confira as mensagens abaixo antes de salvar.
+                </div>
+                <input type="hidden" th:field="*{id}">
+
+                <div class="field">
+                    <label>Quarto relacionado</label>
+                    <select th:field="*{quartoId}" th:errorclass="input-error">
+                        <option value="">Selecione o quarto</option>
+                        <option th:each="quarto : ${quartos}" th:value="${quarto.id}" th:text="${'Quarto ' + quarto.numero + ' - ' + quarto.status.descricao}"></option>
+                    </select>
+                    <span class="field-error" th:if="${#fields.hasErrors('quartoId')}" th:errors="*{quartoId}">Selecione o quarto.</span>
+                </div>
+
+                <div class="field">
+                    <label>Tipo do chamado</label>
+                    <select th:field="*{tipo}" th:errorclass="input-error">
+                        <option value="">Selecione o tipo</option>
+                        <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
+                    </select>
+                    <small>Chamados de limpeza ou manutenção podem atualizar o status operacional do quarto.</small>
+                    <span class="field-error" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}">Selecione o tipo.</span>
+                </div>
+
+                <div class="field">
+                    <label>Status</label>
+                    <select th:field="*{status}">
+                        <option th:each="status : ${statusChamados}" th:value="${status}" th:text="${status.descricao}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Descrição</label>
+                    <textarea th:field="*{descricao}" th:errorclass="input-error" placeholder="Ex: quarto 203 precisa trocar lâmpada, ar-condicionado com problema ou hóspede pediu toalha extra."></textarea>
+                    <span class="field-error" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}">Informe a descrição.</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary-action" type="submit">Salvar chamado</button>
+                    <a class="btn btn-secondary" th:href="@{/chamados}">Voltar para chamados</a>
+                </div>
+            </form>
+
+            <aside class="data-card helper-card">
+                <div class="section-title">
+                    <div>
+                        <h2>Como usar</h2>
+                        <p>Esta tela separa o cadastro da rotina de acompanhamento.</p>
+                    </div>
+                </div>
+                <div class="helper-list">
+                    <div>
+                        <strong>Limpeza</strong>
+                        <span>Use quando a governança precisa atuar em um quarto específico.</span>
+                    </div>
+                    <div>
+                        <strong>Manutenção</strong>
+                        <span>Use quando o quarto precisa ser bloqueado para reparo ou inspeção.</span>
+                    </div>
+                    <div>
+                        <strong>Solicitação</strong>
+                        <span>Use para pedidos de hóspedes, como toalhas extras ou apoio da recepção.</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
